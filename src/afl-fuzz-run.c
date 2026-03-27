@@ -682,7 +682,7 @@ abort_calibration:
 
     afl->var_byte_count = count_bytes(afl, afl->var_bytes);
 
-    if (!q->var_behavior) { ++afl->queued_variable; }
+    if (!q->var_behavior) { q->var_behavior = 1;++afl->queued_variable; }
 
   }
 
@@ -857,6 +857,40 @@ void sync_fuzzers(afl_state_t *afl) {
 
         u8  fault;
         u8 *mem = mmap(0, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+
+        if(afl->symcc_mode){
+          int32_t depth = path_con_tree_check_input(afl, mem, st.st_size);
+          if(depth < 0){
+            if(depth == -2){
+              printf("\n");
+              ACTF("Seems like that we've thoroughly covered all the branches recorded.");
+              ACTF("So let's exit symcc mode.");
+              afl->symcc_mode = 0;
+                     
+              u8 *path_con_trace_path;
+              path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
+              if(!access(path_con_trace_path,0))
+                remove(path_con_trace_path);
+              ck_free(path_con_trace_path);
+
+              u8 *path_con_tree_vis_path;
+              path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-final", afl->out_dir);
+              visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+              ck_free(path_con_tree_vis_path);
+              u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
+              afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+            }
+            afl->fsrv.total_execs++;
+            continue;
+          }
+          else{
+            *(u32*)afl->queue_entry_id->map = afl->queued_items;
+            *(u32*)afl->insert_depth->map = depth;
+          }
+          if(path_con_tree_is_focus_mode(afl)){
+            afl->foc_exec_cnt++;
+          }
+        }
 
         if (mem == MAP_FAILED) { PFATAL("Unable to mmap '%s'", path); }
 
@@ -1189,13 +1223,64 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
 
   u8 fault;
 
-  if (unlikely(len = write_to_testcase(afl, (void **)&out_buf, len, 0)) == 0) {
+  if(afl->symcc_mode){
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    int32_t depth = path_con_tree_check_input(afl, out_buf, len);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    afl->check_input_tm += (end.tv_sec - start.tv_sec) * 1000 + 
+                (end.tv_nsec - start.tv_nsec) / 1000000;
+    afl->check_input_cnt++;
+    if(depth < 0){
+      if(depth == -2){
+        printf("\n");
+        ACTF("Seems like that we've thoroughly covered all the branches recorded.");
+        ACTF("So let's exit symcc mode.");
+        afl->symcc_mode = 0;
+        
+        u8 *path_con_trace_path;
+        path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
+        if(!access(path_con_trace_path,0))
+          remove(path_con_trace_path);
+        ck_free(path_con_trace_path);
 
-    return 0;
-
+        u8 *path_con_tree_vis_path;
+        path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-final", afl->out_dir);
+        visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+        ck_free(path_con_tree_vis_path);
+        u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
+        afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+      }
+      afl->fsrv.total_execs++;
+      if (!(afl->stage_cur % afl->stats_update_freq) ||
+        afl->stage_cur + 1 == afl->stage_max) {
+        show_stats(afl);
+      }
+      return 0;
+    }
+    else{
+      *(u32*)afl->queue_entry_id->map = afl->queued_items;
+      *(u32*)afl->insert_depth->map = depth;
+    }
+    if(path_con_tree_is_focus_mode(afl)){
+      afl->foc_exec_cnt += 1;
+    }
   }
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+  if (unlikely(len = write_to_testcase(afl, (void **)&out_buf, len, 0)) == 0) {
+    return 0;
+  }                                                                                                                                   
 
   fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+  if(afl->symcc_mode && afl->get_clean_cksum)
+    *(u8*)afl->symbolic->map = 1;
+  if(!afl->symcc_mode){
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    afl->con_exec_tm += (end.tv_sec - start.tv_sec) * 1000 + 
+                  (end.tv_nsec - start.tv_nsec) / 1000000;
+    afl->con_exec_cnt++;
+  }
 
   if (afl->stop_soon) { return 1; }
 

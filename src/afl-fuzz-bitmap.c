@@ -771,6 +771,27 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
        successful. */
     res = calibrate_case(afl, afl->queue_top, mem, afl->queue_cycle - 1, 0);
 
+    if(afl->symcc_mode){
+      if(likely(!afl->queue_top->cal_failed) && likely(!afl->queue_top->var_behavior)){
+        *(u8*)afl->symbolic->map = 1;
+        if (write_to_testcase(afl, (void **)&mem, len, 0) == 0) {
+          return 0;
+        }                                                                                                                                   
+        fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        *(u8*)afl->symbolic->map = 0;
+        u8 *path_con_trace_path;
+        path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items - 1);
+        path_con_tree_insert_trace(afl, path_con_trace_path, afl->queue_top);
+        ck_free(path_con_trace_path);
+        if(!(afl->queued_items % 1)){
+          u8 *path_con_tree_vis_path;
+          path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-%06u", afl->out_dir, afl->queued_items - 1);
+          visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+          ck_free(path_con_tree_vis_path);
+        }
+      }
+    }
+
     if (unlikely(res == FSRV_RUN_ERROR)) {
 
       FATAL("Unable to execute target application");

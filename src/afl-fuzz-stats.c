@@ -316,6 +316,10 @@ void write_stats_file(afl_state_t *afl, u32 t_bytes, double bitmap_cvg,
   u8    fn_final[PATH_MAX];
   FILE *f;
 
+  if(afl->path_con_tree){
+    path_con_tree_save_stats(afl);
+  }
+
   snprintf(fn_tmp, PATH_MAX, "%s/.fuzzer_stats_tmp", afl->out_dir);
   snprintf(fn_final, PATH_MAX, "%s/fuzzer_stats", afl->out_dir);
   f = create_ffile(fn_tmp);
@@ -1417,6 +1421,12 @@ void show_stats_normal(afl_state_t *afl) {
 
   }
 
+  u8 tmp2[128];
+  sprintf(tmp2, ", %s/%s",
+  u_stringify_int(IB(0), afl->stage_finds[STAGE_FOCUS]),
+  u_stringify_int(IB(1), afl->stage_cycles[STAGE_FOCUS]));
+  strcat(tmp, tmp2);
+
   // if (afl->custom_mutators_count) {
 
   //
@@ -1427,7 +1437,7 @@ void show_stats_normal(afl_state_t *afl) {
   //
   //} else {
 
-  SAYF(bV bSTOP "    trim/eff : " cRST "%-36s " bSTG bV RESET_G1, tmp);
+  SAYF(bV bSTOP "trim/eff/foc : " cRST "%-36s " bSTG bV RESET_G1, tmp);
 
   //}
 

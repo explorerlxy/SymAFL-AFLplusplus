@@ -650,6 +650,36 @@ void read_foreign_testcases(afl_state_t *afl, int first) {
 
         }
 
+        if(afl->symcc_mode){
+          int32_t depth = path_con_tree_check_input(afl, mem, st.st_size);
+          if(depth < 0){
+            if(depth == -2){
+              printf("\n");
+              ACTF("Seems like that we've thoroughly covered all the branches recorded.");
+              ACTF("So let's exit symcc mode.");
+              afl->symcc_mode = 0;       
+              
+              u8 *path_con_trace_path;
+              path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
+              if(!access(path_con_trace_path,0))
+                remove(path_con_trace_path);
+              ck_free(path_con_trace_path);
+
+              u8 *path_con_tree_vis_path;
+              path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-final", afl->out_dir);
+              visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+              ck_free(path_con_tree_vis_path);
+              u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
+              afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+            }
+            afl->fsrv.total_execs++;
+            continue;
+          }
+          else{
+            *(u32*)afl->queue_entry_id->map = afl->queued_items;
+            *(u32*)afl->insert_depth->map = depth;
+          }
+        }
         u32 len = write_to_testcase(afl, (void **)&mem, st.st_size, 1);
         fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
         afl->syncing_party = foreign_name;
@@ -756,20 +786,10 @@ void read_testcases(afl_state_t *afl, u8 *directory) {
   if (nl_cnt) {
 
     u32 done = 0;
+    i = 0;
 
-    if (unlikely(afl->in_place_resume)) {
-
-      i = nl_cnt;
-
-    } else {
-
-      i = 0;
-
-    }
 
     do {
-
-      if (unlikely(afl->in_place_resume)) { --i; }
 
       struct stat st;
       u8          dfn[PATH_MAX];
@@ -783,6 +803,14 @@ void read_testcases(afl_state_t *afl, u8 *directory) {
 
         PFATAL("Unable to access '%s'", fn2);
 
+      }
+
+      if(afl->symcc_mode)
+      if(strstr(fn2, ".pct-") || strstr(fn2, ".PathConTree")){
+        u8 * nfn = alloc_printf("%s/queue/%s", afl->out_dir, strrchr(fn2, '/') + 1);
+        link_or_copy(fn2, nfn);
+        ck_free(fn2);
+        goto next_entry;
       }
 
       /* obviously we want to skip "descending" into . and .. directories,
@@ -824,6 +852,17 @@ void read_testcases(afl_state_t *afl, u8 *directory) {
 
       add_to_queue(afl, fn2, st.st_size >= MAX_FILE ? MAX_FILE : st.st_size,
                    passed_det);
+      if(afl->symcc_mode){
+        u8 *id = strstr(fn2, "id:");
+        if(id && strlen(id+3) >= 6){
+          char pct[7] = {0};
+          id += 3;
+          memcpy(pct, id, 6);
+          char *pfn = alloc_printf("%s/.pct-%s", dir, pct);
+          if(path_con_tree_check_input(afl, fn2, st.st_size) >= 0)
+            path_con_tree_insert_trace(afl, pfn, afl->queue_top);
+        }
+      }
 
       if (unlikely(afl->shm.cmplog_mode)) {
 
@@ -850,15 +889,8 @@ void read_testcases(afl_state_t *afl, u8 *directory) {
       }
 
     next_entry:
-      if (unlikely(afl->in_place_resume)) {
 
-        if (unlikely(i == 0)) { done = 1; }
-
-      } else {
-
-        if (unlikely(++i >= (u32)nl_cnt)) { done = 1; }
-
-      }
+      if (unlikely(++i >= (u32)nl_cnt)) { done = 1; }
 
     } while (!done);
 
@@ -1378,6 +1410,52 @@ void perform_dry_run(afl_state_t *afl) {
 
     }
 
+    // insert the path constraints trace of queue entry that can be calibrated successfully and has no variable behavior
+    if(afl->symcc_mode && likely(!q->cal_failed) && likely(!q->var_behavior)){
+      int32_t depth = path_con_tree_check_input(afl, use_mem, read_len);
+      if(depth < 0){
+        if(depth == -2){
+          printf("\n");
+          ACTF("Seems like that we've thoroughly covered all the branches recorded.");
+          ACTF("So let's exit symcc mode.");
+          afl->symcc_mode = 0;
+
+          u8 *path_con_trace_path;
+          path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
+          if(!access(path_con_trace_path,0))
+            remove(path_con_trace_path);
+          ck_free(path_con_trace_path);
+
+          u8 *path_con_tree_vis_path;
+          path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-final", afl->out_dir);
+          visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+          ck_free(path_con_tree_vis_path);
+          u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
+          afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+        }
+        afl->fsrv.total_execs++;
+      }
+      else{
+        *(u8*)afl->symbolic->map = 1;
+        *(u32*)afl->queue_entry_id->map = idx;
+        *(u32*)afl->insert_depth->map = depth;
+        (void)write_to_testcase(afl, (void **)&use_mem, read_len, 1);
+        u32 rt = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        u8 *path_con_trace_path;
+        path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, idx);
+        path_con_tree_insert_trace(afl, path_con_trace_path, q);
+        ck_free(path_con_trace_path);
+        *(u8*)afl->symbolic->map = 0;
+      }
+    }
+  
+  }
+
+  if(afl->symcc_mode){
+    u8 *path_con_tree_vis_path;
+    path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-init", afl->out_dir);
+    visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+    ck_free(path_con_tree_vis_path);
   }
 
   if (cal_failures) {
@@ -1494,7 +1572,7 @@ void perform_dry_run(afl_state_t *afl) {
 
 /* Helper function: link() if possible, copy otherwise. */
 
-static void link_or_copy(u8 *old_path, u8 *new_path) {
+void link_or_copy(u8 *old_path, u8 *new_path) {
 
   s32 i = link(old_path, new_path);
   if (!i) { return; }
@@ -1867,6 +1945,23 @@ void nuke_resume_dir(afl_state_t *afl) {
   ck_free(fn);
 
   fn = alloc_printf("%s/_resume", afl->out_dir);
+  if(afl->symcc_mode){
+    ACTF("Deleting old symcc data...");
+    DIR           *d;
+    struct dirent *d_ent;
+    d = opendir(fn);
+    if (d){
+      while ((d_ent = readdir(d))) {
+        if(strlen(d_ent->d_name) >= 5)
+          if(!strncmp(d_ent->d_name, ".pct-", 5) || !strncmp(d_ent->d_name, ".PathConTree-", 13)) {
+            u8 *fname = alloc_printf("%s/%s", fn, d_ent->d_name);
+            if (unlink(fname)) { PFATAL("Unable to delete '%s'", fname); }
+            ck_free(fname);
+          }
+      }
+      closedir(d);
+    }
+  }
   if (delete_files(fn, case_prefix)) { goto dir_cleanup_failed; }
   ck_free(fn);
 
@@ -2031,6 +2126,23 @@ static void handle_existing_out_dir(afl_state_t *afl) {
   ck_free(fn);
 
   fn = alloc_printf("%s/queue", afl->out_dir);
+  if(afl->symcc_mode){
+    ACTF("Deleting old symcc data...");
+    DIR           *d;
+    struct dirent *d_ent;
+    d = opendir(fn);
+    if(d){
+      while ((d_ent = readdir(d))) {
+        if(strlen(d_ent->d_name) >= 5)
+          if(!strncmp(d_ent->d_name, ".pct-", 5) || !strncmp(d_ent->d_name, ".PathConTree-", 13)) {
+            u8 *fname = alloc_printf("%s/%s", fn, d_ent->d_name);
+            if (unlink(fname)) { PFATAL("Unable to delete '%s'", fname); }
+            ck_free(fname);
+          }
+      }
+      closedir(d);
+    }
+  }
   if (delete_files(fn, case_prefix)) { goto dir_cleanup_failed; }
   ck_free(fn);
 
@@ -2926,6 +3038,55 @@ void setup_testcase_shmem(afl_state_t *afl) {
   afl->fsrv.support_shmem_fuzz = 1;
   afl->fsrv.shmem_fuzz_len = (u32 *)map;
   afl->fsrv.shmem_fuzz = map + sizeof(u32);
+
+}
+
+void setup_outdir_shmem(afl_state_t *afl) {
+  afl->outdir = ck_alloc(sizeof(sharedmem_t));
+
+  u8 *map = afl_shm_init(afl->outdir, strlen(afl->out_dir) + 8, 1);
+  if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+
+  u8 *shm_str = alloc_printf("%d", afl->outdir->shm_id);
+  setenv(SHM_OUTDIR_ENV_VAR, shm_str, 1);
+  ck_free(shm_str);
+
+}
+
+void setup_symbolic_shmem(afl_state_t *afl) {
+  afl->symbolic = ck_alloc(sizeof(sharedmem_t));
+
+  u8 *map = afl_shm_init(afl->symbolic, 1, 1);
+  if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+  *map = (u8)0;
+
+  u8 *shm_str = alloc_printf("%d", afl->symbolic->shm_id);
+  setenv(SHM_SYMBOLIC_ENV_VAR, shm_str, 1);
+  ck_free(shm_str);
+
+}
+
+void setup_queue_entry_id_shmem(afl_state_t *afl) {
+  afl->queue_entry_id = ck_alloc(sizeof(sharedmem_t));
+
+  u8 *map = afl_shm_init(afl->queue_entry_id, 4, 1);
+  if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+
+  u8 *shm_str = alloc_printf("%d", afl->queue_entry_id->shm_id);
+  setenv(SHM_QUEUE_ENTRY_ID_ENV_VAR, shm_str, 1);
+  ck_free(shm_str);
+
+}
+
+void setup_insert_depth_shmem(afl_state_t *afl) {
+  afl->insert_depth = ck_alloc(sizeof(sharedmem_t));
+
+  u8 *map = afl_shm_init(afl->insert_depth, 4, 1);
+  if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+
+  u8 *shm_str = alloc_printf("%d", afl->insert_depth->shm_id);
+  setenv(SHM_INSERT_DEPTH_ENV_VAR, shm_str, 1);
+  ck_free(shm_str);
 
 }
 

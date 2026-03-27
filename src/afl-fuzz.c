@@ -615,7 +615,7 @@ int main(int argc, char **argv_orig, char **envp) {
   // still available: HjJkKqrv
   while (
       (opt = getopt(argc, argv,
-                    "+a:Ab:B:c:CdDe:E:f:F:g:G:hi:I:l:L:m:M:nNo:Op:P:QRs:S:t:T:"
+                    "+a:Ab:B:c:CdDe:E:f:F:g:G:hi:I:Kl:L:m:M:nNo:Op:P:QRs:S:t:T:"
                     "uUV:w:WXx:YzZ")) > 0) {
 
     switch (opt) {
@@ -711,6 +711,25 @@ int main(int argc, char **argv_orig, char **envp) {
       case 'I':
         afl->infoexec = optarg;
         break;
+
+      case 'K':{
+        u32 initDecCnt = 0;
+        char *endptr;
+        if (optarg == NULL) initDecCnt = 1024;
+        else {
+          initDecCnt = strtoul(optarg, &endptr, 10);
+          if (*endptr != '\0' || initDecCnt == 0) FATAL("Please supply a decimal number within [1, 2^32 - 1].");
+        }
+        afl->symcc_mode = 1;
+        afl->disable_trim = 1;
+        ACTF("Setup SymCC Mode...");
+        afl->path_con_tree = path_con_tree_create(initDecCnt);
+        if (!afl->path_con_tree) {
+              PFATAL("Failed to create tree\n");
+              exit(-1);
+        }
+        break;
+      }
 
       case 'b': {                                          /* bind CPU core */
 
@@ -1534,6 +1553,14 @@ int main(int argc, char **argv_orig, char **envp) {
 
   #endif
 
+  }
+
+  if(afl->symcc_mode){
+    setup_outdir_shmem(afl);
+    setup_symbolic_shmem(afl);
+    setup_queue_entry_id_shmem(afl);
+    setup_insert_depth_shmem(afl);
+    ACTF("SymCC Mode Begin...");
   }
 
   if (afl->fsrv.mem_limit && afl->shm.cmplog_mode) afl->fsrv.mem_limit += 260;
@@ -2423,6 +2450,10 @@ int main(int argc, char **argv_orig, char **envp) {
 
         detect_file_args(argv + optind + 1, afl->fsrv.out_file,
                          &afl->fsrv.use_stdin);
+
+        if(afl->symcc_mode){
+          setenv("SYMCC_INPUT_FILE", afl->fsrv.out_file, 1);
+        }
         break;
 
       }
@@ -2920,7 +2951,9 @@ int main(int argc, char **argv_orig, char **envp) {
     memset(afl->virgin_crash, 255, map_size);
 
     if (likely(!afl->afl_env.afl_no_startup_calibration)) {
-
+      
+      if(afl->symcc_mode)
+        memcpy(afl->outdir->map, afl->out_dir, strlen(afl->out_dir));
       perform_dry_run(afl);
 
     } else {
@@ -3126,6 +3159,20 @@ int main(int argc, char **argv_orig, char **envp) {
                    )) {
 
         ++afl->cycles_wo_finds;
+
+        if(afl->symcc_mode){
+            if(path_con_tree_set_up_focus_mode(afl)){
+              uint32_t key_bytes_cnt = 1;
+              while(1){
+                key_bytes_cnt = path_con_tree_set_up_focus_target(afl);
+                if(!key_bytes_cnt)
+                  break;
+                path_con_tree_focus_fuzzing(afl);
+              }
+            }
+            path_con_tree_exit_focus_mode(afl);
+            
+        }
 
         if (unlikely(afl->shm.cmplog_mode &&
                      afl->cmplog_max_filesize < MAX_FILE)) {
@@ -3528,7 +3575,7 @@ stop_fuzzing:
     /* create fastresume.bin */
     u8 fr[PATH_MAX];
     snprintf(fr, PATH_MAX, "%s/fastresume.bin", afl->out_dir);
-    ACTF("Writing %s ...", fr);
+    
   #ifdef HAVE_ZLIB
     if ((fr_fd = ZLIBOPEN(fr, "wb9")) != NULL) {
 
@@ -3621,6 +3668,21 @@ stop_fuzzing:
     (void)unlink(afl->fsrv.out_file);
 
   }
+
+  if(afl->symcc_mode){
+    u8 *path_con_tree_vis_path;
+    path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-final", afl->out_dir);
+    if(access(path_con_tree_vis_path, 0))
+      visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+    ck_free(path_con_tree_vis_path);
+  }
+
+  ACTF("con_exec_cnt: %lld", afl->con_exec_cnt);
+  if(afl->con_exec_tm)
+    ACTF("con_exec_cnt_total: %lf", afl->con_exec_cnt / (double)(afl->con_exec_tm) * 1000);
+  else
+    ACTF("con_exec_cnt_total: ~");
+  
 
   ck_free(afl->n_fuzz);
   ck_free(afl->n_fuzz_dup);

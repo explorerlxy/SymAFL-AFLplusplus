@@ -66,6 +66,7 @@ a.out
 as
 compile_commands.json
 core*
+tmp/
 examples/afl_frida/afl-frida
 examples/afl_frida/frida-gum-example.c
 examples/afl_frida/frida-gum.h

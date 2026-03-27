@@ -627,8 +627,11 @@ u8 fuzz_one_original(afl_state_t *afl) {
   orig_hit_cnt = afl->queued_items + afl->saved_crashes;
 
   /* Get a clean cksum. */
-
+  if(afl->symcc_mode)
+    afl->get_clean_cksum = 1;
   if (common_fuzz_stuff(afl, out_buf, len)) { goto abandon_entry; }
+  if(afl->symcc_mode)
+    afl->get_clean_cksum = 0;
 
   prev_cksum = hash64(afl->fsrv.trace_bits, afl->fsrv.map_size, HASH_CONST);
   _prev_cksum = prev_cksum;
@@ -3721,9 +3724,11 @@ static u8 mopt_common_fuzzing(afl_state_t *afl, MOpt_globals_t MOpt_globals) {
   orig_hit_cnt = afl->queued_items + afl->saved_crashes;
 
   /* Get a clean cksum. */
-
+  if(afl->symcc_mode)
+    afl->get_clean_cksum = 1;
   if (common_fuzz_stuff(afl, out_buf, len)) { goto abandon_entry; }
-
+  if(afl->symcc_mode)
+    afl->get_clean_cksum = 0;
   prev_cksum = hash64(afl->fsrv.trace_bits, afl->fsrv.map_size, HASH_CONST);
   _prev_cksum = prev_cksum;
 

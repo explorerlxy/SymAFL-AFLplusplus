@@ -990,7 +990,7 @@ void afl_fsrv_start(afl_forkserver_t *fsrv, char **argv,
   }
 
   /* PARENT PROCESS */
-
+  
   char pid_buf[16];
   sprintf(pid_buf, "%d", fsrv->fsrv_pid);
   if (fsrv->cmplog_binary)

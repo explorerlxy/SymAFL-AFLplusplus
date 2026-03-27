@@ -30,9 +30,9 @@ INCLUDE_PATH = $(PREFIX)/include/afl
 PROGNAME    = afl
 VERSION     = $(shell grep '^$(HASH)define VERSION ' ../config.h | cut -d '"' -f2)
 
-PROGS       = afl-fuzz afl-showmap afl-tmin afl-gotcpu afl-analyze
+PROGS       = libpathcontree.so afl-fuzz afl-showmap afl-tmin afl-gotcpu afl-analyze
 SH_PROGS    = afl-plot afl-cmin afl-cmin.bash afl-whatsup afl-addseeds afl-system-config afl-persistent-config afl-cc
-HEADERS     = include/afl-fuzz.h include/afl-mutations.h include/afl-persistent-replay.h include/afl-prealloc.h include/afl-record-compat.h include/alloc-inl.h include/android-ashmem.h include/cmplog.h include/common.h include/config.h include/coverage-32.h include/coverage-64.h include/debug.h include/envs.h include/forkserver.h include/hash.h include/list.h include/sharedmem.h include/snapshot-inl.h include/t1ha.h include/t1ha0_ia32aes_b.h include/t1ha_bits.h include/t1ha_selfcheck.h include/types.h include/xxhash.h
+HEADERS     = include/afl-fuzz.h include/afl-mutations.h include/afl-persistent-replay.h include/afl-prealloc.h include/afl-record-compat.h include/alloc-inl.h include/android-ashmem.h include/cmplog.h include/common.h include/config.h include/coverage-32.h include/coverage-64.h include/debug.h include/envs.h include/forkserver.h include/hash.h include/list.h include/sharedmem.h include/snapshot-inl.h include/t1ha.h include/t1ha0_ia32aes_b.h include/t1ha_bits.h include/t1ha_selfcheck.h include/types.h include/xxhash.h include/PathConTree.hpp
 MANPAGES=$(foreach p, $(PROGS) $(SH_PROGS), $(p).8)
 ASAN_OPTIONS=detect_leaks=0
 
@@ -289,7 +289,7 @@ ifneq "$(findstring OpenBSD, $(SYS))" ""
   override LDFLAGS += -lpthread -lm
 endif
 
-COMM_HDR    = include/alloc-inl.h include/config.h include/debug.h include/types.h include/afl-fuzz.h include/hash.h include/sharedmem.h include/forkserver.h include/common.h include/list.h
+COMM_HDR    = include/alloc-inl.h include/config.h include/debug.h include/types.h include/afl-fuzz.h include/hash.h include/sharedmem.h include/forkserver.h include/common.h include/list.h include/PathConTree.hpp
 
 ifeq "$(shell echo '$(HASH)include <Python.h>@int main() {return 0; }' | tr @ '\n' | $(CC) $(CFLAGS) -x c - -o .test $(PYTHON_INCLUDE) $(LDFLAGS) $(PYTHON_LIB) 2>/dev/null && echo 1 || echo 0 ; rm -f .test )" "1"
 	PYTHON_OK=1
@@ -472,6 +472,9 @@ endif
 ready:
 	@echo "[+] Everything seems to be working, ready to compile. ($(shell $(CC) --version 2>&1|head -n 1))"
 
+libpathcontree.so: $(COMM_HDR) src/PathConTree.cpp
+	$(CXX) -g -fPIC -shared -lz3 src/PathConTree.cpp -o $@ -Wl,-soname,$@  -Wl,--export-dynamic -Iinclude
+
 src/afl-performance.o: $(COMM_HDR) src/afl-performance.c
 	$(CC) $(CFLAGS) $(CFLAGS_FLTO) $(CFLAGS_OPT) $(SPECIAL_PERFORMANCE) -Iinclude -c src/afl-performance.c -o src/afl-performance.o
 
@@ -485,7 +488,7 @@ src/afl-sharedmem.o: $(COMM_HDR) src/afl-sharedmem.c include/android-ashmem.h in
 	$(CC) $(CFLAGS) $(CFLAGS_FLTO) $(SPECIAL_PERFORMANCE) -c src/afl-sharedmem.c -o src/afl-sharedmem.o
 
 afl-fuzz: $(COMM_HDR) include/afl-fuzz.h $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o include/cmplog.h include/envs.h | test_x86
-	$(CC) $(CFLAGS) $(COMPILE_STATIC) $(CFLAGS_FLTO) $(SPECIAL_PERFORMANCE) $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o -o $@ $(PYFLAGS) $(LDFLAGS) -lm
+	$(CC) $(CFLAGS) $(COMPILE_STATIC) $(CFLAGS_FLTO) $(SPECIAL_PERFORMANCE) $(AFL_FUZZ_FILES) src/afl-common.o src/afl-sharedmem.o src/afl-forkserver.o src/afl-performance.o -o $@ $(PYFLAGS) $(LDFLAGS) -lpathcontree -lm -lz3 -Wl,-rpath=\$$ORIGIN
 ifdef IS_IOS
 	@ldid -Sentitlements.plist $@ && echo "[+] Signed $@" || { echo "[-] Failed to sign $@"; }
 endif

@@ -1,0 +1,109 @@
+2025-06-05 20:06:14.992 [info] Lingma [version: 2.5.6, lang: en, platform: linux, arch: x64, appName=Visual Studio Code, runMode: local, extensionKind=1, remoteName=undefined, wsl=undefined, remoteContainers=undefined, extensionMode=1] is starting now!
+2025-06-05 20:06:14.995 [info] Congratulations, "Lingma" is now active!
+2025-06-05 20:06:15.002 [info] check exist binary path, no need update.
+2025-06-05 20:06:15.027 [info] lingma try to connect to language server.
+2025-06-05 20:06:15.027 [info] try to create ws connection
+2025-06-05 20:06:15.038 [info] lingma connected to language server successfully.
+2025-06-05 20:06:19.823 [info] auth status synced. id=caroulder, status=5, whitelist=4, token=
+2025-06-05 20:06:19.825 [info] auth status synced. id=caroulder, status=5, whitelist=4, token=
+2025-06-05 20:16:14.829 [info] try to create ws connection
+2025-06-05 20:28:30.594 [info] try to create ws connection
+2025-06-05 21:12:14.763 [info] try to create ws connection
+2025-06-05 21:22:14.764 [info] try to create ws connection
+2025-06-05 21:32:14.774 [info] try to create ws connection
+2025-06-05 21:42:14.768 [info] try to create ws connection
+2025-06-05 21:52:14.779 [info] try to create ws connection
+2025-06-05 22:02:14.769 [info] try to create ws connection
+2025-06-05 22:12:14.771 [info] try to create ws connection
+2025-06-06 08:38:12.452 [info] try to create ws connection
+2025-06-06 08:44:41.973 [info] auth status synced. id=caroulder, status=2, whitelist=3, token=
+2025-06-06 08:48:12.014 [info] try to create ws connection
+2025-06-06 08:58:12.017 [info] try to create ws connection
+2025-06-06 09:08:12.024 [info] try to create ws connection
+2025-06-06 09:18:12.018 [info] try to create ws connection
+2025-06-06 09:28:12.037 [info] try to create ws connection
+2025-06-06 09:38:12.023 [info] try to create ws connection
+2025-06-06 09:48:12.028 [info] try to create ws connection
+2025-06-06 09:58:12.027 [info] try to create ws connection
+2025-06-06 10:08:12.024 [info] try to create ws connection
+2025-06-06 10:18:12.027 [info] try to create ws connection
+2025-06-06 10:28:12.029 [info] try to create ws connection
+2025-06-06 10:38:12.034 [info] try to create ws connection
+2025-06-06 10:48:12.031 [info] try to create ws connection
+2025-06-06 10:58:12.030 [info] try to create ws connection
+2025-06-06 11:08:12.045 [info] try to create ws connection
+2025-06-06 11:18:12.029 [info] try to create ws connection
+2025-06-06 11:28:12.036 [info] try to create ws connection
+2025-06-06 11:38:12.042 [info] try to create ws connection
+2025-06-06 11:48:12.055 [info] try to create ws connection
+2025-06-06 11:58:12.060 [info] try to create ws connection
+2025-06-06 12:08:12.065 [info] try to create ws connection
+2025-06-06 12:18:12.054 [info] try to create ws connection
+2025-06-06 12:28:12.059 [info] try to create ws connection
+2025-06-06 12:38:12.059 [info] try to create ws connection
+2025-06-06 12:48:12.077 [info] try to create ws connection
+2025-06-06 12:58:12.083 [info] try to create ws connection
+2025-06-06 12:58:16.981 [info] auth status synced. id=caroulder, status=5, whitelist=4, token=
+2025-06-06 13:08:12.086 [info] try to create ws connection
+2025-06-06 13:14:40.794 [info] auth status synced. id=caroulder, status=2, whitelist=3, token=
+2025-06-06 13:18:12.079 [info] try to create ws connection
+2025-06-06 13:28:12.092 [info] try to create ws connection
+2025-06-06 13:38:12.113 [info] try to create ws connection
+2025-06-06 13:48:12.120 [info] try to create ws connection
+2025-06-06 13:58:12.094 [info] try to create ws connection
+2025-06-06 14:08:12.113 [info] try to create ws connection
+2025-06-06 14:21:31.171 [info] try to create ws connection
+2025-06-06 14:31:31.159 [info] try to create ws connection
+2025-06-06 14:41:31.157 [info] try to create ws connection
+2025-06-06 14:51:31.172 [info] try to create ws connection
+2025-06-06 15:01:31.173 [info] try to create ws connection
+2025-06-06 15:11:31.165 [info] try to create ws connection
+2025-06-06 15:21:31.174 [info] try to create ws connection
+2025-06-06 15:31:31.180 [info] try to create ws connection
+2025-06-06 15:41:31.167 [info] try to create ws connection
+2025-06-06 15:51:31.179 [info] try to create ws connection
+2025-06-06 16:01:31.171 [info] try to create ws connection
+2025-06-06 16:11:31.193 [info] try to create ws connection
+2025-06-06 16:21:31.177 [info] try to create ws connection
+2025-06-06 16:31:31.192 [info] try to create ws connection
+2025-06-06 16:41:31.187 [info] try to create ws connection
+2025-06-06 16:51:31.189 [info] try to create ws connection
+2025-06-06 17:01:31.187 [info] try to create ws connection
+2025-06-06 17:11:31.185 [info] try to create ws connection
+2025-06-06 17:21:31.187 [info] try to create ws connection
+2025-06-06 17:31:31.188 [info] try to create ws connection
+2025-06-06 17:41:31.188 [info] try to create ws connection
+2025-06-06 17:51:31.192 [info] try to create ws connection
+2025-06-06 18:01:31.202 [info] try to create ws connection
+2025-06-06 18:11:31.194 [info] try to create ws connection
+2025-06-06 18:21:31.199 [info] try to create ws connection
+2025-06-06 18:31:31.203 [info] try to create ws connection
+2025-06-06 18:41:31.204 [info] try to create ws connection
+2025-06-06 18:51:31.205 [info] try to create ws connection
+2025-06-06 19:01:31.212 [info] try to create ws connection
+2025-06-06 19:01:31.575 [info] auth status synced. id=caroulder, status=2, whitelist=3, token=
+2025-06-06 19:11:31.214 [info] try to create ws connection
+2025-06-06 19:21:31.212 [info] try to create ws connection
+2025-06-06 19:31:31.217 [info] try to create ws connection
+2025-06-06 19:41:31.211 [info] try to create ws connection
+2025-06-06 19:48:02.276 [info] auth status synced. id=caroulder, status=2, whitelist=3, token=
+2025-06-06 19:51:31.214 [info] try to create ws connection
+2025-06-06 20:01:31.216 [info] try to create ws connection
+2025-06-06 20:11:31.218 [info] try to create ws connection
+2025-06-06 20:21:31.216 [info] try to create ws connection
+2025-06-06 20:31:31.217 [info] try to create ws connection
+2025-06-06 20:41:31.224 [info] try to create ws connection
+2025-06-06 20:51:31.221 [info] try to create ws connection
+2025-06-06 21:01:31.228 [info] try to create ws connection
+2025-06-06 21:11:31.224 [info] try to create ws connection
+2025-06-06 21:21:31.229 [info] try to create ws connection
+2025-06-06 21:31:31.228 [info] try to create ws connection
+2025-06-06 21:41:31.234 [info] try to create ws connection
+2025-06-06 21:51:31.229 [info] try to create ws connection
+2025-06-06 22:01:31.234 [info] try to create ws connection
+2025-06-06 22:11:31.231 [info] try to create ws connection
+2025-06-06 22:21:31.232 [info] try to create ws connection
+2025-06-06 22:31:31.234 [info] try to create ws connection
+2025-06-06 22:41:31.238 [info] try to create ws connection
+2025-06-06 22:51:31.238 [info] try to create ws connection
+2025-06-06 23:53:26.202 [info] try to create ws connection

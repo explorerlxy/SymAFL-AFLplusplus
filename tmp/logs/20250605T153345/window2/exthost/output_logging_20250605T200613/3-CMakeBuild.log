@@ -1,0 +1,56 @@
+[proc] Executing command: /usr/bin/cmake --version
+[proc] Executing command: /usr/bin/cmake -E capabilities
+[kit] Successfully loaded 3 kits from /home/caroulder/.local/share/CMakeTools/cmake-tools-kits.json
+[variant] Loaded new set of variants
+[kit] Detected kits definition version change from undefined to 2. Silently scanning for kits.
+[proc] Executing command: /usr/local/bin/afl-gcc -v
+[proc] Executing command: /usr/bin/c89-gcc -v
+[proc] Executing command: /usr/bin/c99-gcc -v
+[proc] Executing command: /usr/bin/clang -v
+[proc] Executing command: /usr/bin/clang-10 -v
+[proc] Executing command: /usr/bin/gcc -v
+[proc] Executing command: /usr/bin/gcc-8 -v
+[proc] Executing command: /usr/bin/gcc-9 -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc-8 -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc-9 -v
+[proc] Executing command: /bin/c89-gcc -v
+[proc] Executing command: /bin/c99-gcc -v
+[proc] Executing command: /bin/clang -v
+[proc] Executing command: /bin/clang-10 -v
+[proc] Executing command: /bin/gcc -v
+[proc] Executing command: /bin/gcc-8 -v
+[proc] Executing command: /bin/gcc-9 -v
+[proc] Executing command: /bin/x86_64-linux-gnu-gcc -v
+[proc] Executing command: /bin/x86_64-linux-gnu-gcc-8 -v
+[proc] Executing command: /bin/x86_64-linux-gnu-gcc-9 -v
+[proc] Executing command: /bin/x86_64-linux-gnu-gcc -v
+[proc] Executing command: /bin/gcc -v
+[proc] Executing command: /bin/c99-gcc -v
+[proc] Executing command: /bin/c89-gcc -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc -v
+[proc] Executing command: /usr/bin/gcc -v
+[proc] Executing command: /usr/bin/c99-gcc -v
+[proc] Executing command: /usr/bin/c89-gcc -v
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): Clang 10.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit (trusted): Clang 10.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 8.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 8.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): Clang 10.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit (trusted): Clang 10.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 8.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 8.4.0 x86_64-linux-gnu
+[kit] Found Kit (trusted): GCC 9.4.0 x86_64-linux-gnu
+[kit] Successfully loaded 3 kits from /home/caroulder/.local/share/CMakeTools/cmake-tools-kits.json

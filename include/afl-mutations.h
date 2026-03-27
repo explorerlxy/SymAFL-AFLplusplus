@@ -1812,7 +1812,7 @@ inline u32 afl_mutate(afl_state_t *afl, u8 *buf, u32 len, u32 steps,
 
     if (tmp_buf) {
 
-      u8 *ptr = realloc(tmp_buf, max_len);
+      u8 *ptr = (u8 *)realloc(tmp_buf, max_len);
 
       if (!ptr) {
 
@@ -1826,7 +1826,7 @@ inline u32 afl_mutate(afl_state_t *afl, u8 *buf, u32 len, u32 steps,
 
     } else {
 
-      if ((tmp_buf = malloc(max_len)) == NULL) { return 0; }
+      if ((tmp_buf = (u8 *)malloc(max_len)) == NULL) { return 0; }
 
     }
 

@@ -419,6 +419,22 @@
 
 #define MAX_LINE 8192
 
+/* Environment variable used to pass AFL OUTDIR to the called program. */
+
+#define SHM_OUTDIR_ENV_VAR "__AFL_SHM_OUTDIR_ENV_ID"
+
+/* Environment variable used to pass SYMBOIC to the called program. */
+
+#define SHM_SYMBOLIC_ENV_VAR "__AFL_SHM_SYMBOLIC_ENV_ID"
+
+/* Environment variable used to pass QUEUE ENTRY ID to the called program. */
+
+#define SHM_QUEUE_ENTRY_ID_ENV_VAR "__AFL_SHM_QUEUE_ENTRY_ID"
+
+/* Environment variable used to pass PATH CON TREE INSERT DEPTH to the called program. */
+
+#define SHM_INSERT_DEPTH_ENV_VAR "__AFL_SHM_INSERT_DEPTH__ID"
+
 /* Environment variable used to pass SHM ID to the called program. */
 
 #define SHM_ENV_VAR "__AFL_SHM_ID"

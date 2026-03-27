@@ -1,0 +1,8 @@
+2025-06-05 15:33:49.645 [info] Lingma [version: 2.5.6, lang: en, platform: linux, arch: x64, appName=Visual Studio Code, runMode: local, extensionKind=1, remoteName=undefined, wsl=undefined, remoteContainers=undefined, extensionMode=1] is starting now!
+2025-06-05 15:33:49.651 [info] Congratulations, "Lingma" is now active!
+2025-06-05 15:33:49.654 [info] check exist binary path, no need update.
+2025-06-05 15:33:49.664 [info] lingma try to connect to language server.
+2025-06-05 15:33:49.664 [info] try to create ws connection
+2025-06-05 15:33:49.685 [info] lingma connected to language server successfully.
+2025-06-05 15:33:54.636 [info] auth status synced. id=caroulder, status=5, whitelist=4, token=
+2025-06-05 15:34:00.783 [info] auth status synced. id=caroulder, status=5, whitelist=4, token=

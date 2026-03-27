@@ -133,6 +133,18 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
   afl->fsrv.dev_null_fd = -1;
   afl->fsrv.child_pid = -1;
   afl->fsrv.out_dir_fd = -1;
+  afl->symcc_mode = 0;
+  afl->sym_fuzz_per_sec = 0;
+  afl->check_input_cnt = 0;
+  afl->check_input_tm = 0;
+  afl->con_exec_cnt = 0;
+  afl->con_exec_tm = 0;
+  afl->foc_exec_cnt = 0;
+  afl->foc_exec_tm = 0;
+  afl->foc_sol_cnt = 0;
+  afl->single_path_con_sol_tm = 0;
+  afl->single_path_con_sol_cnt = 0;
+  afl->single_path_con_sol_suc = 0;
 
   /* Init SkipDet */
   afl->skipdet_g =

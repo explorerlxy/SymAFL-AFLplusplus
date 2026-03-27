@@ -1,0 +1,317 @@
+2025-06-05 15:33:48.795 [info] Started local extension host with pid 1906041.
+2025-06-05 15:33:48.961 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.16.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.965 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.16.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.966 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.20.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.971 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.22.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.971 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.0.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.972 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.2.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.974 [error] [/home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.409.0]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:33:48.975 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.4.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.978 [error] [/home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:33:48.983 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.6.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.983 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.6.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:33:48.986 [error] [/home/caroulder/.vscode/extensions/ms-python.vscode-pylance-2025.5.1]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:33:49.075 [error] Extension 'ms-vscode.cpptools' appears in product.json but enables LESS API proposals than the extension wants.
+package.json (LOSES): terminalDataWriteEvent, chatParticipantAdditions
+product.json (WINS): terminalDataWriteEvent, lmTools
+2025-06-05 15:33:49.102 [error] Extension 'ms-vscode.cpptools' CANNOT register tool without name and modelDescription: {"name":"cpptools-lmtool-configuration","toolReferenceName":"cpp","displayName":"C/C++ configuration","canBeReferencedInPrompt":true,"userDescription":"Configuration of the active C or C++ file, like language standard version and target platform.","modelDescription":"For the active C or C++ file, this tool provides: the language (C, C++, or CUDA), the language standard version (such as C++11, C++14, C++17, or C++20), the compiler (such as GCC, Clang, or MSVC), the target platform (such as x86, x64, or ARM), and the target architecture (such as 32-bit or 64-bit).","icon":"$(file-code)","when":"(config.C_Cpp.experimentalFeatures =~ /^[eE]nabled$/)"}
+2025-06-05 15:33:49.112 [error] [ms-azuretools.vscode-docker]: issue/reporter is a proposed menu identifier. It requires 'package.json#enabledApiProposals: ["contribIssueReporter"]' and is only available when running out of dev or with the following command line switch: --enable-proposed-api ms-azuretools.vscode-docker
+2025-06-05 15:33:57.879 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:33:58.420 [info] [perf] Render performance baseline is 12ms
+2025-06-05 15:34:09.551 [info] Started local extension host with pid 1906318.
+2025-06-05 15:34:09.796 [error] Extension 'ms-vscode.cpptools' appears in product.json but enables LESS API proposals than the extension wants.
+package.json (LOSES): terminalDataWriteEvent, chatParticipantAdditions
+product.json (WINS): terminalDataWriteEvent, lmTools
+2025-06-05 15:34:09.825 [error] [ms-azuretools.vscode-docker]: issue/reporter is a proposed menu identifier. It requires 'package.json#enabledApiProposals: ["contribIssueReporter"]' and is only available when running out of dev or with the following command line switch: --enable-proposed-api ms-azuretools.vscode-docker
+2025-06-05 15:34:11.246 [error] Extension 'ms-vscode.cpptools' appears in product.json but enables LESS API proposals than the extension wants.
+package.json (LOSES): terminalDataWriteEvent, chatParticipantAdditions
+product.json (WINS): terminalDataWriteEvent, lmTools
+2025-06-05 15:34:11.255 [error] Extension 'ms-vscode.cpptools' CANNOT register tool without name and modelDescription: {"name":"cpptools-lmtool-configuration","toolReferenceName":"cpp","displayName":"C/C++ configuration","canBeReferencedInPrompt":true,"userDescription":"Configuration of the active C or C++ file, like language standard version and target platform.","modelDescription":"For the active C or C++ file, this tool provides: the language (C, C++, or CUDA), the language standard version (such as C++11, C++14, C++17, or C++20), the compiler (such as GCC, Clang, or MSVC), the target platform (such as x86, x64, or ARM), and the target architecture (such as 32-bit or 64-bit).","icon":"$(file-code)","when":"(config.C_Cpp.experimentalFeatures =~ /^[eE]nabled$/)"}
+2025-06-05 15:34:11.262 [error] [ms-azuretools.vscode-docker]: issue/reporter is a proposed menu identifier. It requires 'package.json#enabledApiProposals: ["contribIssueReporter"]' and is only available when running out of dev or with the following command line switch: --enable-proposed-api ms-azuretools.vscode-docker
+2025-06-05 15:34:12.246 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:34:12.250 [info] [perf] Render performance baseline is 68ms
+2025-06-05 15:34:12.664 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.16.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.665 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.16.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.665 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.20.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.667 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2024.22.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.671 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.0.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.671 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.2.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.671 [error] [/home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.409.0]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:34:12.671 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.4.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.671 [error] [/home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:34:12.673 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.6.0-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.675 [error] [/home/caroulder/.vscode/extensions/ms-python.python-2025.6.1-linux-x64]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.94.0-20240918.
+2025-06-05 15:34:12.681 [error] [/home/caroulder/.vscode/extensions/ms-python.vscode-pylance-2025.5.1]: Extension is not compatible with Code 1.93.1. Extension requires: ^1.99.0.
+2025-06-05 15:34:23.325 [error] net::ERR_CONNECTION_RESET: Failed: net::ERR_CONNECTION_RESET
+    at oe.E (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:170518)
+    at async oe.C (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:167247)
+    at async oe.z (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:163749)
+    at async oe.getExtensions (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:162851)
+    at async U (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:71500)
+    at async W.M (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:71980)
+    at async /usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:65429
+    at async Promise.all (index 0)
+    at async W.I (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:65216)
+    at async W.installGalleryExtensions (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:62348)
+    at async W.installFromGallery (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:61492)
+2025-06-05 15:34:40.723 [error] net::ERR_ADDRESS_UNREACHABLE: Error: net::ERR_ADDRESS_UNREACHABLE
+    at SimpleURLLoaderWrapper.<anonymous> (node:electron/js2c/browser_init:2:114482)
+    at SimpleURLLoaderWrapper.emit (node:events:519:28)
+2025-06-05 15:34:41.254 [error] Cannot read the extension from /home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0: ScanningExtension: Cannot read the extension from /home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0
+    at _.scanLocalExtension (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:127494)
+2025-06-05 15:34:41.265 [error] Cannot read the extension from /home/caroulder/.vscode/extensions/ms-python.python-2025.6.1-linux-x64: ScanningExtension: Cannot read the extension from /home/caroulder/.vscode/extensions/ms-python.python-2025.6.1-linux-x64
+    at _.scanLocalExtension (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:127494)
+2025-06-05 15:34:41.292 [error] net::ERR_CONNECTION_RESET: Failed: net::ERR_CONNECTION_RESET
+    at oe.E (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:170518)
+    at async oe.C (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:167247)
+    at async oe.z (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:163749)
+    at async oe.getExtensions (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:162851)
+    at async U (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:71500)
+    at async W.M (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:71980)
+    at async /usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:65429
+    at async Promise.all (index 0)
+    at async W.I (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:65216)
+    at async W.installGalleryExtensions (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:62348)
+    at async W.installFromGallery (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:61492)
+2025-06-05 15:34:44.411 [error] Cannot read the extension from /home/caroulder/.vscode/extensions/ms-python.vscode-pylance-2025.5.1: ScanningExtension: Cannot read the extension from /home/caroulder/.vscode/extensions/ms-python.vscode-pylance-2025.5.1
+    at _.scanLocalExtension (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:127494)
+2025-06-05 15:34:59.154 [error] net::ERR_ADDRESS_UNREACHABLE: Error: net::ERR_ADDRESS_UNREACHABLE
+    at SimpleURLLoaderWrapper.<anonymous> (node:electron/js2c/browser_init:2:114482)
+    at SimpleURLLoaderWrapper.emit (node:events:519:28)
+2025-06-05 15:34:59.171 [error] Cannot read the extension from /home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0: ScanningExtension: Cannot read the extension from /home/caroulder/.vscode/extensions/ms-vscode-remote.remote-containers-0.413.0
+    at _.scanLocalExtension (/usr/share/code/resources/app/out/vs/code/node/sharedProcess/sharedProcessMain.js:105:127494)
+2025-06-05 15:39:15.206 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:44:20.519 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:49:24.108 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:54:27.219 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 15:59:27.243 [warning] Failed to fetch chat participant registry Offline
+2025-06-05 16:04:33.544 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:09:40.570 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:14:42.544 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:19:44.450 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:24:56.355 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:29:59.206 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:35:02.482 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:40:09.271 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:45:22.231 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:53:27.903 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 16:58:34.235 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:03:41.162 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:08:48.814 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:14:00.445 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:19:06.970 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:24:10.665 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:29:22.436 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:34:32.656 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:39:39.759 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:44:45.220 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:49:51.237 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 17:54:57.934 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:00:03.898 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:05:11.153 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:10:18.378 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:15:25.984 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:20:36.221 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:25:38.243 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:30:44.334 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:35:50.814 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:40:57.483 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:46:04.087 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:51:15.766 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 18:56:21.171 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:01:27.974 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:06:29.745 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:11:35.696 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:16:37.898 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:21:43.092 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:26:50.804 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:31:58.249 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:37:01.634 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:42:12.479 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:47:15.686 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:52:17.506 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 19:57:19.997 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:02:31.420 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:07:31.510 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:12:31.565 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:17:31.641 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:24:47.636 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 20:29:47.727 [warning] Failed to fetch chat participant registry Offline
+2025-06-05 21:08:31.954 [warning] Failed to fetch chat participant registry Offline
+2025-06-05 21:13:31.975 [warning] Failed to fetch chat participant registry Offline
+2025-06-05 21:18:32.000 [warning] Failed to fetch chat participant registry Offline
+2025-06-05 21:23:37.119 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:28:37.225 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:33:37.339 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:38:37.449 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:43:37.547 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:48:37.704 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:53:37.816 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 21:58:37.883 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 22:03:37.988 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 22:08:38.069 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-05 22:13:38.154 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 08:34:53.047 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 08:40:17.499 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 08:45:32.656 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 08:50:47.911 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 08:56:08.099 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:01:24.300 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:06:40.760 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:11:56.103 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:17:11.281 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:22:26.459 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:27:41.624 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:32:57.569 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:38:12.755 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:43:27.928 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:48:43.142 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:53:58.371 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 09:59:13.499 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:04:28.736 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:09:43.924 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:15:04.102 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:20:24.342 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:25:44.518 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:30:59.742 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:36:21.448 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:41:41.870 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:47:04.756 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:52:19.976 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 10:57:35.175 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:02:50.394 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:08:05.855 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:13:21.076 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:18:41.298 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:24:04.179 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:29:24.520 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:34:49.827 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:40:36.044 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:46:22.256 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:52:08.498 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 11:57:54.709 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:03:40.943 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:09:27.154 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:15:13.423 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:20:59.667 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:26:45.887 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:32:06.069 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:37:26.280 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:42:46.496 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:48:06.647 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:53:26.887 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 12:58:47.115 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:03:59.280 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:09:17.601 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:14:36.187 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:19:53.423 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:25:08.910 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:30:24.929 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:35:40.537 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:40:56.258 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:46:15.683 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:51:31.411 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 13:56:50.919 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:02:13.020 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:07:34.672 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:15:54.282 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:21:14.940 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:26:32.801 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:31:51.372 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:37:13.114 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:42:31.816 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:47:49.140 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:53:07.551 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 14:58:23.098 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:03:40.871 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:08:58.018 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:14:14.219 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:19:32.800 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:24:52.783 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:30:13.437 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:35:31.606 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:40:50.585 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:46:08.268 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:51:28.927 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 15:56:49.840 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:02:12.769 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:07:33.284 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:12:53.263 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:18:13.596 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:23:35.780 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:28:56.127 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:34:15.972 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:39:31.650 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:44:54.295 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:50:13.099 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 16:55:35.112 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:00:51.815 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:06:12.616 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:11:34.441 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:16:52.694 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:22:38.904 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:27:55.749 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:33:14.300 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:38:33.264 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:43:52.584 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:49:10.710 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:54:28.001 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 17:59:47.586 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:05:06.575 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:10:27.286 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:15:47.802 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:21:06.693 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:26:25.252 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:31:42.673 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:37:02.120 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:42:24.265 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:47:43.316 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:53:01.396 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 18:58:18.617 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:03:41.147 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:09:01.533 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:14:22.999 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:19:41.800 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:25:07.971 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:30:27.162 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:35:46.089 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:41:06.456 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:46:28.370 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:51:47.269 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 19:57:11.866 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:02:32.049 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:07:54.689 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:13:15.152 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:18:33.473 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:23:54.676 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:29:14.903 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:34:34.072 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:39:50.288 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:45:09.194 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:50:27.521 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 20:55:44.614 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:01:03.543 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:06:24.134 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:11:48.738 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:17:10.260 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:22:30.676 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:27:48.042 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:33:07.010 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:38:27.057 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:43:45.532 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:49:05.101 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:54:24.574 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 21:59:44.879 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:05:04.146 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:10:24.385 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:15:41.614 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:20:57.653 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:26:13.154 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:31:28.633 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:36:43.912 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:41:59.233 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:47:16.861 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:52:32.199 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 22:57:47.487 [warning] Failed to fetch chat participant registry Failed to fetch
+2025-06-06 23:55:28.649 [warning] Failed to fetch chat participant registry Failed to fetch
+                                                                                            

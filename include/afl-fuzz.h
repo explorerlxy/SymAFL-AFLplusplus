@@ -76,6 +76,9 @@
 #include <sys/file.h>
 #include <sys/types.h>
 #include "asanfuzz.h"
+struct queue_entry;
+typedef struct afl_state afl_state_t;
+#include "PathConTree.hpp"
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || \
     defined(__NetBSD__) || defined(__DragonFly__)
@@ -303,6 +306,7 @@ enum {
   /* 21 */ STAGE_ITS,
   /* 22 */ STAGE_INF,
   /* 23 */ STAGE_QUICK,
+  /* 24 */ STAGE_FOCUS,
 
   STAGE_NUM_MAX
 
@@ -558,6 +562,18 @@ typedef struct afl_state {
   u32 hang_tmout,                       /* Timeout used for hang det (ms)   */
       stats_update_freq;                /* Stats update frequency (execs)   */
 
+  u64 sym_fuzz_per_sec,
+      check_input_cnt,
+      check_input_tm,
+      con_exec_cnt,
+      con_exec_tm,
+      foc_exec_cnt,
+      foc_exec_tm,
+      foc_sol_cnt,
+      single_path_con_sol_tm,
+      single_path_con_sol_cnt,
+      single_path_con_sol_suc;
+
   u8 havoc_stack_pow2,                  /* HAVOC_STACK_POW2                 */
       no_unlink,                        /* do not unlink cur_input          */
       debug,                            /* Debug mode                       */
@@ -600,7 +616,15 @@ typedef struct afl_state {
       expand_havoc,                /* perform expensive havoc after no find */
       cycle_schedules,                  /* cycle power schedules?           */
       old_seed_selection,               /* use vanilla afl seed selection   */
-      reinit_table;                     /* reinit the queue weight table    */
+      reinit_table,                     /* reinit the queue weight table    */
+      symcc_mode,                       /* Running in symcc mode?           */
+      get_clean_cksum;                  /* Get clean checksum?              */  
+
+  PathConTree *path_con_tree;
+  sharedmem_t *outdir;
+  sharedmem_t *symbolic;
+  sharedmem_t *queue_entry_id;
+  sharedmem_t *insert_depth;
 
   u8 *virgin_bits,                      /* Regions yet untouched by fuzzing */
       *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
@@ -1149,6 +1173,18 @@ void afl_states_request_skip(void);
 
 /* Setup shmem for testcase delivery */
 void setup_testcase_shmem(afl_state_t *afl);
+
+/* Setup shmem for afl outdir */
+void setup_outdir_shmem(afl_state_t *afl);
+
+/* Setup shmem for afl symbolic */
+void setup_symbolic_shmem(afl_state_t *afl);
+
+/* Setup shmem for queue entry ID */
+void setup_queue_entry_id_shmem(afl_state_t *afl);
+
+/* Setup shmem for pc insert depth */
+void setup_insert_depth_shmem(afl_state_t *afl);
 
 void read_afl_environment(afl_state_t *, char **);
 
