@@ -3046,6 +3046,7 @@ void setup_outdir_shmem(afl_state_t *afl) {
 
   u8 *map = afl_shm_init(afl->outdir, strlen(afl->out_dir) + 8, 1);
   if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+  strcpy((char *)map, afl->out_dir);
 
   u8 *shm_str = alloc_printf("%d", afl->outdir->shm_id);
   setenv(SHM_OUTDIR_ENV_VAR, shm_str, 1);
