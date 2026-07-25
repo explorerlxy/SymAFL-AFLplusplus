@@ -116,3 +116,16 @@ utils/plot_ui/afl-plot-ui
 vuln_prog
 argv_fuzz_demo
 argv_fuzz_persistent_demo
+
+# ---- SymAFL / PCBT runtime artifacts ----
+# AFL output directories and fuzzer runtime state
+afl-out/
+sym_mode_stats
+# PCBT incremental traces and tree snapshots
+.pct-*
+.PathConTree-*
+# symccTest fixtures moved to the SymAFL integration repository
+# (tests/fixtures/); never re-track local copies here
+test/symccTest/
+# Locally compiled PCBT test binary
+pctTest
