@@ -1,3 +1,0 @@
-digraph BinaryTree {
-  node [shape=rectangle, style=filled, fillcolor=lightblue];
-}
