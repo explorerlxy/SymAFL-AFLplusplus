@@ -651,14 +651,26 @@ void read_foreign_testcases(afl_state_t *afl, int first) {
         }
 
         if(afl->symcc_mode){
+          struct timespec check_start, check_end;
+          clock_gettime(CLOCK_MONOTONIC, &check_start);
           int32_t depth = path_con_tree_check_input(afl, mem, st.st_size);
+          clock_gettime(CLOCK_MONOTONIC, &check_end);
+          afl->check_input_tm += (check_end.tv_sec - check_start.tv_sec) * 1000 +
+              (check_end.tv_nsec - check_start.tv_nsec) / 1000000;
+          afl->check_input_cnt++;
+          afl->pcbt_candidate_cnt++;
+          u64 check_ms = get_cur_time();
+          if(!afl->pcbt_first_check_ms)
+            afl->pcbt_first_check_ms = check_ms;
+          afl->pcbt_last_check_ms = check_ms;
           if(depth < 0){
             if(depth == -2){
+              afl->pcbt_exhausted_cnt++;
               printf("\n");
               ACTF("Seems like that we've thoroughly covered all the branches recorded.");
               ACTF("So let's exit symcc mode.");
-              afl->symcc_mode = 0;       
-              
+              afl->symcc_mode = 0;
+
               u8 *path_con_trace_path;
               path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
               if(!access(path_con_trace_path,0))
@@ -670,20 +682,36 @@ void read_foreign_testcases(afl_state_t *afl, int first) {
               visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
               ck_free(path_con_tree_vis_path);
               u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
-              afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+              afl->sym_fuzz_per_sec = afl->pcbt_candidate_cnt / ((double)(runtime_ms) / 1000);
             }
-            afl->fsrv.total_execs++;
+            else{
+              afl->pcbt_rejected_cnt++;
+            }
             continue;
           }
           else{
+            afl->pcbt_admitted_cnt++;
             *(u32*)afl->queue_entry_id->map = afl->queued_items;
             *(u32*)afl->insert_depth->map = depth;
+            *(u8*)afl->symbolic->map = 1;
+            afl->pcbt_pending_admission = 1;
+            afl->pcbt_pending_queue_id = afl->queued_items;
           }
         }
         u32 len = write_to_testcase(afl, (void **)&mem, st.st_size, 1);
+        struct timespec exec_start, exec_end;
+        clock_gettime(CLOCK_MONOTONIC, &exec_start);
         fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        clock_gettime(CLOCK_MONOTONIC, &exec_end);
+        if(afl->pcbt_pending_admission){
+          *(u8*)afl->symbolic->map = 0;
+          afl->pcbt_concolic_exec_tm += (exec_end.tv_sec - exec_start.tv_sec) * 1000 +
+              (exec_end.tv_nsec - exec_start.tv_nsec) / 1000000;
+          afl->pcbt_concolic_exec_cnt++;
+        }
         afl->syncing_party = foreign_name;
         afl->queued_imported += save_if_interesting(afl, mem, len, fault);
+        afl->pcbt_pending_admission = 0;
         afl->syncing_party = 0;
         munmap(mem, st.st_size);
         close(fd);
@@ -1412,9 +1440,21 @@ void perform_dry_run(afl_state_t *afl) {
 
     // insert the path constraints trace of queue entry that can be calibrated successfully and has no variable behavior
     if(afl->symcc_mode && likely(!q->cal_failed) && likely(!q->var_behavior)){
+      struct timespec check_start, check_end;
+      clock_gettime(CLOCK_MONOTONIC, &check_start);
       int32_t depth = path_con_tree_check_input(afl, use_mem, read_len);
+      clock_gettime(CLOCK_MONOTONIC, &check_end);
+      afl->check_input_tm += (check_end.tv_sec - check_start.tv_sec) * 1000 +
+          (check_end.tv_nsec - check_start.tv_nsec) / 1000000;
+      afl->check_input_cnt++;
+      afl->pcbt_candidate_cnt++;
+      u64 check_ms = get_cur_time();
+      if(!afl->pcbt_first_check_ms)
+        afl->pcbt_first_check_ms = check_ms;
+      afl->pcbt_last_check_ms = check_ms;
       if(depth < 0){
         if(depth == -2){
+          afl->pcbt_exhausted_cnt++;
           printf("\n");
           ACTF("Seems like that we've thoroughly covered all the branches recorded.");
           ACTF("So let's exit symcc mode.");
@@ -1431,21 +1471,36 @@ void perform_dry_run(afl_state_t *afl) {
           visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
           ck_free(path_con_tree_vis_path);
           u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
-          afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+          afl->sym_fuzz_per_sec = afl->pcbt_candidate_cnt / ((double)(runtime_ms) / 1000);
         }
-        afl->fsrv.total_execs++;
+        else{
+          afl->pcbt_rejected_cnt++;
+        }
       }
       else{
+        afl->pcbt_admitted_cnt++;
         *(u8*)afl->symbolic->map = 1;
         *(u32*)afl->queue_entry_id->map = idx;
         *(u32*)afl->insert_depth->map = depth;
         (void)write_to_testcase(afl, (void **)&use_mem, read_len, 1);
-        u32 rt = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        struct timespec exec_start, exec_end;
+        clock_gettime(CLOCK_MONOTONIC, &exec_start);
+        u8 trace_fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        clock_gettime(CLOCK_MONOTONIC, &exec_end);
+        *(u8*)afl->symbolic->map = 0;
+        afl->pcbt_concolic_exec_tm += (exec_end.tv_sec - exec_start.tv_sec) * 1000 +
+            (exec_end.tv_nsec - exec_start.tv_nsec) / 1000000;
+        afl->pcbt_concolic_exec_cnt++;
         u8 *path_con_trace_path;
         path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, idx);
-        path_con_tree_insert_trace(afl, path_con_trace_path, q);
+        if(likely(trace_fault == FSRV_RUN_OK)){
+          path_con_tree_insert_trace(afl, path_con_trace_path, q);
+          afl->pcbt_trace_insert_cnt++;
+        }
+        else if(trace_fault == FSRV_RUN_TMOUT && !access(path_con_trace_path, 0)){
+          remove(path_con_trace_path);
+        }
         ck_free(path_con_trace_path);
-        *(u8*)afl->symbolic->map = 0;
       }
     }
   

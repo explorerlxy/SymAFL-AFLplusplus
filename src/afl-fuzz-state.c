@@ -139,12 +139,19 @@ void afl_state_init(afl_state_t *afl, uint32_t map_size) {
   afl->check_input_tm = 0;
   afl->con_exec_cnt = 0;
   afl->con_exec_tm = 0;
-  afl->foc_exec_cnt = 0;
-  afl->foc_exec_tm = 0;
-  afl->foc_sol_cnt = 0;
-  afl->single_path_con_sol_tm = 0;
-  afl->single_path_con_sol_cnt = 0;
-  afl->single_path_con_sol_suc = 0;
+  afl->pcbt_candidate_cnt = 0;
+  afl->pcbt_admitted_cnt = 0;
+  afl->pcbt_rejected_cnt = 0;
+  afl->pcbt_exhausted_cnt = 0;
+  afl->pcbt_concolic_exec_cnt = 0;
+  afl->pcbt_concolic_exec_tm = 0;
+  afl->pcbt_trace_insert_cnt = 0;
+  afl->pcbt_no_cov_gain_cnt = 0;
+  afl->pcbt_saturated_branch_cnt = 0;
+  afl->pcbt_first_check_ms = 0;
+  afl->pcbt_last_check_ms = 0;
+  afl->pcbt_pending_admission = 0;
+  afl->pcbt_pending_queue_id = 0;
 
   /* Init SkipDet */
   afl->skipdet_g =

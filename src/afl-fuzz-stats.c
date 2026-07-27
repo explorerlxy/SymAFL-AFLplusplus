@@ -1423,8 +1423,8 @@ void show_stats_normal(afl_state_t *afl) {
 
   u8 tmp2[128];
   sprintf(tmp2, ", %s/%s",
-  u_stringify_int(IB(0), afl->stage_finds[STAGE_FOCUS]),
-  u_stringify_int(IB(1), afl->stage_cycles[STAGE_FOCUS]));
+  u_stringify_int(IB(0), afl->pcbt_admitted_cnt),
+  u_stringify_int(IB(1), afl->pcbt_rejected_cnt));
   strcat(tmp, tmp2);
 
   // if (afl->custom_mutators_count) {
@@ -1437,7 +1437,7 @@ void show_stats_normal(afl_state_t *afl) {
   //
   //} else {
 
-  SAYF(bV bSTOP "trim/eff/foc : " cRST "%-36s " bSTG bV RESET_G1, tmp);
+  SAYF(bV bSTOP "trim/eff/pcbt: " cRST "%-36s " bSTG bV RESET_G1, tmp);
 
   //}
 

@@ -645,6 +645,20 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
 
       if (san_fault == FSRV_RUN_OK) {
 
+        if (afl->symcc_mode && afl->pcbt_pending_admission) {
+          afl->pcbt_no_cov_gain_cnt++;
+          if (path_con_tree_note_no_cov_gain(afl))
+            afl->pcbt_saturated_branch_cnt++;
+
+          u8 *path_con_trace_path;
+          path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir,
+                                             afl->pcbt_pending_queue_id);
+          if(!access(path_con_trace_path, 0))
+            remove(path_con_trace_path);
+          ck_free(path_con_trace_path);
+          afl->pcbt_pending_admission = 0;
+        }
+
         if (unlikely(afl->crash_mode)) { ++afl->total_crashes; }
         return 0;
 
@@ -771,17 +785,13 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
        successful. */
     res = calibrate_case(afl, afl->queue_top, mem, afl->queue_cycle - 1, 0);
 
-    if(afl->symcc_mode){
+    if(afl->symcc_mode && afl->pcbt_pending_admission){
       if(likely(!afl->queue_top->cal_failed) && likely(!afl->queue_top->var_behavior)){
-        *(u8*)afl->symbolic->map = 1;
-        if (write_to_testcase(afl, (void **)&mem, len, 0) == 0) {
-          return 0;
-        }                                                                                                                                   
-        fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
-        *(u8*)afl->symbolic->map = 0;
         u8 *path_con_trace_path;
-        path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items - 1);
+        path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir,
+                                           afl->pcbt_pending_queue_id);
         path_con_tree_insert_trace(afl, path_con_trace_path, afl->queue_top);
+        afl->pcbt_trace_insert_cnt++;
         ck_free(path_con_trace_path);
         if(!(afl->queued_items % 1)){
           u8 *path_con_tree_vis_path;
@@ -790,6 +800,7 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
           ck_free(path_con_tree_vis_path);
         }
       }
+      afl->pcbt_pending_admission = 0;
     }
 
     if (unlikely(res == FSRV_RUN_ERROR)) {

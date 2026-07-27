@@ -859,14 +859,26 @@ void sync_fuzzers(afl_state_t *afl) {
         u8 *mem = mmap(0, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
         if(afl->symcc_mode){
+          struct timespec check_start, check_end;
+          clock_gettime(CLOCK_MONOTONIC, &check_start);
           int32_t depth = path_con_tree_check_input(afl, mem, st.st_size);
+          clock_gettime(CLOCK_MONOTONIC, &check_end);
+          afl->check_input_tm += (check_end.tv_sec - check_start.tv_sec) * 1000 +
+              (check_end.tv_nsec - check_start.tv_nsec) / 1000000;
+          afl->check_input_cnt++;
+          afl->pcbt_candidate_cnt++;
+          u64 check_ms = get_cur_time();
+          if(!afl->pcbt_first_check_ms)
+            afl->pcbt_first_check_ms = check_ms;
+          afl->pcbt_last_check_ms = check_ms;
           if(depth < 0){
             if(depth == -2){
+              afl->pcbt_exhausted_cnt++;
               printf("\n");
               ACTF("Seems like that we've thoroughly covered all the branches recorded.");
               ACTF("So let's exit symcc mode.");
               afl->symcc_mode = 0;
-                     
+
               u8 *path_con_trace_path;
               path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
               if(!access(path_con_trace_path,0))
@@ -878,17 +890,21 @@ void sync_fuzzers(afl_state_t *afl) {
               visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
               ck_free(path_con_tree_vis_path);
               u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
-              afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+              afl->sym_fuzz_per_sec = afl->pcbt_candidate_cnt / ((double)(runtime_ms) / 1000);
             }
-            afl->fsrv.total_execs++;
+            else{
+              afl->pcbt_rejected_cnt++;
+            }
             continue;
           }
           else{
+            afl->pcbt_admitted_cnt++;
             *(u32*)afl->queue_entry_id->map = afl->queued_items;
             *(u32*)afl->insert_depth->map = depth;
-          }
-          if(path_con_tree_is_focus_mode(afl)){
-            afl->foc_exec_cnt++;
+            /* Admitted candidates execute concolically. */
+            *(u8*)afl->symbolic->map = 1;
+            afl->pcbt_pending_admission = 1;
+            afl->pcbt_pending_queue_id = afl->queued_items;
           }
         }
 
@@ -899,10 +915,20 @@ void sync_fuzzers(afl_state_t *afl) {
 
         u32 new_len = write_to_testcase(afl, (void **)&mem, st.st_size, 1);
 
+        struct timespec exec_start, exec_end;
+        clock_gettime(CLOCK_MONOTONIC, &exec_start);
         fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        clock_gettime(CLOCK_MONOTONIC, &exec_end);
+        if(afl->pcbt_pending_admission){
+          *(u8*)afl->symbolic->map = 0;
+          afl->pcbt_concolic_exec_tm += (exec_end.tv_sec - exec_start.tv_sec) * 1000 +
+              (exec_end.tv_nsec - exec_start.tv_nsec) / 1000000;
+          afl->pcbt_concolic_exec_cnt++;
+        }
 
         if (afl->stop_soon) {
 
+          afl->pcbt_pending_admission = 0;
           munmap(mem, st.st_size);
           close(fd);
 
@@ -912,6 +938,7 @@ void sync_fuzzers(afl_state_t *afl) {
 
         afl->syncing_party = sd_ent->d_name;
         afl->queued_imported += save_if_interesting(afl, mem, new_len, fault);
+        afl->pcbt_pending_admission = 0;
         show_stats(afl);
         afl->syncing_party = 0;
 
@@ -1228,16 +1255,22 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
     clock_gettime(CLOCK_MONOTONIC, &start);
     int32_t depth = path_con_tree_check_input(afl, out_buf, len);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    afl->check_input_tm += (end.tv_sec - start.tv_sec) * 1000 + 
+    afl->check_input_tm += (end.tv_sec - start.tv_sec) * 1000 +
                 (end.tv_nsec - start.tv_nsec) / 1000000;
     afl->check_input_cnt++;
+    afl->pcbt_candidate_cnt++;
+    u64 check_ms = get_cur_time();
+    if(!afl->pcbt_first_check_ms)
+      afl->pcbt_first_check_ms = check_ms;
+    afl->pcbt_last_check_ms = check_ms;
     if(depth < 0){
       if(depth == -2){
+        afl->pcbt_exhausted_cnt++;
         printf("\n");
         ACTF("Seems like that we've thoroughly covered all the branches recorded.");
         ACTF("So let's exit symcc mode.");
         afl->symcc_mode = 0;
-        
+
         u8 *path_con_trace_path;
         path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir, afl->queued_items);
         if(!access(path_con_trace_path,0))
@@ -1249,9 +1282,11 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
         visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
         ck_free(path_con_tree_vis_path);
         u64 runtime_ms = afl->prev_run_time + get_cur_time() - afl->start_time;
-        afl->sym_fuzz_per_sec = afl->fsrv.total_execs / ((double)(runtime_ms) / 1000);
+        afl->sym_fuzz_per_sec = afl->pcbt_candidate_cnt / ((double)(runtime_ms) / 1000);
       }
-      afl->fsrv.total_execs++;
+      else{
+        afl->pcbt_rejected_cnt++;
+      }
       if (!(afl->stage_cur % afl->stats_update_freq) ||
         afl->stage_cur + 1 == afl->stage_max) {
         show_stats(afl);
@@ -1259,35 +1294,49 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
       return 0;
     }
     else{
+      afl->pcbt_admitted_cnt++;
       *(u32*)afl->queue_entry_id->map = afl->queued_items;
       *(u32*)afl->insert_depth->map = depth;
-    }
-    if(path_con_tree_is_focus_mode(afl)){
-      afl->foc_exec_cnt += 1;
+      /* Admitted candidates execute concolically. */
+      *(u8*)afl->symbolic->map = 1;
+      afl->pcbt_pending_admission = 1;
+      afl->pcbt_pending_queue_id = afl->queued_items;
     }
   }
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC, &start);
   if (unlikely(len = write_to_testcase(afl, (void **)&out_buf, len, 0)) == 0) {
+    if(afl->pcbt_pending_admission){
+      *(u8*)afl->symbolic->map = 0;
+      afl->pcbt_pending_admission = 0;
+    }
     return 0;
-  }                                                                                                                                   
+  }
 
   fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
-  if(afl->symcc_mode && afl->get_clean_cksum)
-    *(u8*)afl->symbolic->map = 1;
-  if(!afl->symcc_mode){
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    afl->con_exec_tm += (end.tv_sec - start.tv_sec) * 1000 + 
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  if(afl->pcbt_pending_admission){
+    *(u8*)afl->symbolic->map = 0;
+    afl->pcbt_concolic_exec_tm += (end.tv_sec - start.tv_sec) * 1000 +
+                  (end.tv_nsec - start.tv_nsec) / 1000000;
+    afl->pcbt_concolic_exec_cnt++;
+  }
+  else{
+    afl->con_exec_tm += (end.tv_sec - start.tv_sec) * 1000 +
                   (end.tv_nsec - start.tv_nsec) / 1000000;
     afl->con_exec_cnt++;
   }
 
-  if (afl->stop_soon) { return 1; }
+  if (afl->stop_soon) {
+    afl->pcbt_pending_admission = 0;
+    return 1;
+  }
 
   if (fault == FSRV_RUN_TMOUT) {
 
     if (afl->subseq_tmouts++ > TMOUT_LIMIT) {
 
+      afl->pcbt_pending_admission = 0;
       ++afl->cur_skipped_items;
       return 1;
 
@@ -1305,6 +1354,7 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
   if (afl->skip_requested) {
 
     afl->skip_requested = 0;
+    afl->pcbt_pending_admission = 0;
     ++afl->cur_skipped_items;
     return 1;
 
@@ -1313,6 +1363,7 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
   /* This handles FAULT_ERROR for us: */
 
   afl->queued_discovered += save_if_interesting(afl, out_buf, len, fault);
+  afl->pcbt_pending_admission = 0;
 
   if (!(afl->stage_cur % afl->stats_update_freq) ||
       afl->stage_cur + 1 == afl->stage_max) {

@@ -35,23 +35,15 @@ PathConTree* path_con_tree_create(uint32_t init_dec_cnt);
 // 析构函数
 void path_con_tree_destroy(afl_state_t *afl);
 
-bool path_con_tree_is_focus_mode(afl_state_t *afl);
-
 // 插入pc trace
 int32_t path_con_tree_insert_trace(afl_state_t *afl, const char* smtfile, struct queue_entry *qe);
 // 输入校验
 int32_t path_con_tree_check_input(afl_state_t *afl, const uint8_t* input, uint32_t size);
+// 记录准入候选执行后没有覆盖率增益；返回 1 表示分支达到低价值阈值
+uint8_t path_con_tree_note_no_cov_gain(afl_state_t *afl);
 
 // 可视化接口
 void visualize_path_con_tree(PathConTree* tree, const char* filename);
-
-uint32_t path_con_tree_set_up_focus_mode(afl_state_t *afl);
-
-void path_con_tree_exit_focus_mode(afl_state_t *afl);
-
-uint32_t path_con_tree_set_up_focus_target(afl_state_t *afl);
-
-void path_con_tree_focus_fuzzing(afl_state_t *afl);
 
 void path_con_tree_save_stats(afl_state_t *afl);
 

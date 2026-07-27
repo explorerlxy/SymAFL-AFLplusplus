@@ -10,9 +10,9 @@ This is a modified AFL++ repository. SymAFL adds a Z3-backed **Path Constraint B
 
 | Responsibility | Files |
 |---|---|
-| PCBT implementation: Z3 constraints, `CheckInput`, trace insertion, focus mode, rendering, stats | `src/PathConTree.cpp` |
+| PCBT implementation: Z3 constraints, `CheckInput`, trace insertion, rendering, stats | `src/PathConTree.cpp` |
 | C-facing PCBT API used from AFL++ C sources | `include/PathConTree.hpp` |
-| `-K[initDecCnt]` parsing, `symcc_mode`, tree creation, focus-mode transitions | `src/afl-fuzz.c` |
+| `-K[initDecCnt]` parsing, `symcc_mode`, tree creation | `src/afl-fuzz.c` |
 | Candidate pre-screening before target execution; queue/depth SHM values | `src/afl-fuzz-run.c` |
 | Accepted-seed handling, symbolic trace insertion, PCBT snapshots | `src/afl-fuzz-bitmap.c` |
 | Initial queue handling, reload, and SHM setup | `src/afl-fuzz-init.c` |
@@ -25,7 +25,8 @@ This is a modified AFL++ repository. SymAFL adds a Z3-backed **Path Constraint B
 2. During mutation, `path_con_tree_check_input()` runs before concrete execution. It returns a positive tree depth for a candidate that can open a new branch, `-1` when no new branch is available, and `-2` when the tree is exhausted.
 3. For a candidate selected for execution, AFL++ passes queue entry ID and insertion depth through shared memory. The QSYM runtime produces an incremental SMT trace.
 4. `save_if_interesting()` retains coverage-interesting cases and calls `path_con_tree_insert_trace()` to extend the tree. Rejected cases must not be treated as normal concretely executed candidates.
-5. The tree can enter focus mode after unproductive queue cycles. `PathConTree.cpp` derives a relevant constraint/byte closure before focus mutations; focus-mode setup and exit must leave tree state consistent.
+5. SymAFL-v1 has no focus mode: the PCBT is used exclusively for pre-execution candidate screening. Candidates that pass `CheckInput` execute once in concolic mode (`*__symbolic = 1` is set before their fork and reset afterwards). Coverage-gaining executions are queued and their `.pct` trace is inserted; executions without coverage gain increment the target branch's low-value counter and may mark that branch as fully explored after the configured threshold.
+6. Screening counters (`pcbt_candidate_cnt`, `pcbt_admitted_cnt`, `pcbt_rejected_cnt`, `pcbt_exhausted_cnt`, `pcbt_concolic_exec_cnt/tm`, `pcbt_trace_insert_cnt`, `pcbt_no_cov_gain_cnt`, and `pcbt_saturated_branch_cnt`) are written to `sym_mode_stats`. Candidate throughput is `pcbt_candidate_cnt / pcbt_wall_tm` and includes rejected candidates; `fsrv.total_execs` must not be used for it.
 
 `PathConTree.hpp` relies on inclusion through `afl-fuzz.h` for `afl_state_t` and `queue_entry` declarations. Preserve that include-order assumption when changing the API.
 
@@ -90,8 +91,6 @@ Keep these names aligned with `../symcc/runtime/src/backends/qsym/Runtime.cpp`. 
 | Variable | Default | Effect |
 |---|---:|---|
 | `MAX_ALLOWED_RIGHT_CHILD_CNT` | 128 | Limit repeated attempts at an unexplored negated branch |
-| `MAX_ALLOWED_RIGHT_CHILD_CNT_FOCUS` | 128 | Corresponding focus-mode limit |
 | `MAX_ALLOWED_SOLVER_TIMEOUT` | 1000 ms | Z3 timeout for PCBT checks |
-| `MAX_ALLOWED_DICT_CNT` | 1 | Per-target model dictionary size in focus mode |
 
 Do not change the PCBT algorithm, runtime trace format, or SHM names independently: the matching compiler/runtime behavior is split across [`../RSan/CLAUDE.md`](../RSan/CLAUDE.md) and [`../symcc/CLAUDE.md`](../symcc/CLAUDE.md).

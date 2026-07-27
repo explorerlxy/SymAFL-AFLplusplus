@@ -306,7 +306,6 @@ enum {
   /* 21 */ STAGE_ITS,
   /* 22 */ STAGE_INF,
   /* 23 */ STAGE_QUICK,
-  /* 24 */ STAGE_FOCUS,
 
   STAGE_NUM_MAX
 
@@ -567,12 +566,17 @@ typedef struct afl_state {
       check_input_tm,
       con_exec_cnt,
       con_exec_tm,
-      foc_exec_cnt,
-      foc_exec_tm,
-      foc_sol_cnt,
-      single_path_con_sol_tm,
-      single_path_con_sol_cnt,
-      single_path_con_sol_suc;
+      pcbt_candidate_cnt,      /* all candidates submitted to CheckInput      */
+      pcbt_admitted_cnt,       /* candidates admitted for concolic execution  */
+      pcbt_rejected_cnt,       /* candidates rejected without execution       */
+      pcbt_exhausted_cnt,      /* candidates seen at PCBT exhaustion (-2)     */
+      pcbt_concolic_exec_cnt,  /* admitted candidates actually executed       */
+      pcbt_concolic_exec_tm,   /* wall time of admitted executions (ms)       */
+      pcbt_trace_insert_cnt,   /* coverage-gaining traces inserted into PCBT  */
+      pcbt_no_cov_gain_cnt,    /* admitted executions without coverage gain   */
+      pcbt_saturated_branch_cnt, /* branches reaching the low-value threshold */
+      pcbt_first_check_ms,     /* first PCBT screening timestamp              */
+      pcbt_last_check_ms;      /* latest PCBT screening timestamp             */
 
   u8 havoc_stack_pow2,                  /* HAVOC_STACK_POW2                 */
       no_unlink,                        /* do not unlink cur_input          */
@@ -618,7 +622,9 @@ typedef struct afl_state {
       old_seed_selection,               /* use vanilla afl seed selection   */
       reinit_table,                     /* reinit the queue weight table    */
       symcc_mode,                       /* Running in symcc mode?           */
-      get_clean_cksum;                  /* Get clean checksum?              */  
+      pcbt_pending_admission;           /* Admitted candidate awaiting feedback */
+
+  u32 pcbt_pending_queue_id;            /* .pct id for the pending admission */
 
   PathConTree *path_con_tree;
   sharedmem_t *outdir;

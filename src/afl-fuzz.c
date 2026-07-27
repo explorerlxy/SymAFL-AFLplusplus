@@ -3160,20 +3160,6 @@ int main(int argc, char **argv_orig, char **envp) {
 
         ++afl->cycles_wo_finds;
 
-        if(afl->symcc_mode){
-            if(path_con_tree_set_up_focus_mode(afl)){
-              uint32_t key_bytes_cnt = 1;
-              while(1){
-                key_bytes_cnt = path_con_tree_set_up_focus_target(afl);
-                if(!key_bytes_cnt)
-                  break;
-                path_con_tree_focus_fuzzing(afl);
-              }
-            }
-            path_con_tree_exit_focus_mode(afl);
-            
-        }
-
         if (unlikely(afl->shm.cmplog_mode &&
                      afl->cmplog_max_filesize < MAX_FILE)) {
 
