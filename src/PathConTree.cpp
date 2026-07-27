@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <set>
+#include <unordered_set>
 #include <fstream>
 #include <iostream>
 
@@ -38,10 +39,16 @@ public:
             depth = 0;
         }
         queue<expr> q;
+        // Memoize over the shared DAG: without this, the traversal re-visits
+        // shared subexpressions once per path and blows up combinatorially on
+        // large unsimplified constraints.
+        unordered_set<unsigned> visited;
         q.push(pathCon);
         while(!q.empty()){
             expr e = q.front();
             q.pop();
+            if(!visited.insert(e.id()).second)
+                continue;
             if(e.is_app()){
                 for (unsigned i = 0; i < e.num_args(); ++i)
                     q.push(e.arg(i));
@@ -53,10 +60,9 @@ public:
                     symVarSet.insert(stoul(var.substr(2)));
             }
         }
-        params p(ctx);
-        p.set("timeout", (u32)1000);
-        checkSolver.set(p);
-        checkSolver.add(pathCon);
+        // Solver construction and assertion of the path condition are
+        // deferred to the first check() on this node: most inserted nodes are
+        // never queried, and eager construction dominated InsertTrace cost.
     }
 
     void AddChild(PathConNode *c, bool taken) {
@@ -114,6 +120,13 @@ public:
     }
 
     bool check(const uint8_t* input, uint32_t size){
+        if(!solverReady){
+            params p(ctx);
+            p.set("timeout", (u32)1000);
+            checkSolver.set(p);
+            checkSolver.add(pathCon);
+            solverReady = true;
+        }
         checkSolver.push();
         for(auto sv : symVarSet){
             if(sv >= size){
@@ -141,6 +154,7 @@ private:
     context &ctx;
     func_decl_vector &decls;
     solver checkSolver = solver(ctx);
+    bool solverReady = false;
     expr pathCon;
     PathConNode *left, *right, *parent;
     uint32_t rCnt;
@@ -239,6 +253,8 @@ public:
             file << "pcbt_trace_insert_cnt: " << afl->pcbt_trace_insert_cnt << endl;
             file << "pcbt_no_cov_gain_cnt: " << afl->pcbt_no_cov_gain_cnt << endl;
             file << "pcbt_saturated_branch_cnt: " << afl->pcbt_saturated_branch_cnt << endl;
+            file << "pcbt_replay_cnt: " << afl->pcbt_replay_cnt << endl;
+            file << "pcbt_replay_mismatch_cnt: " << afl->pcbt_replay_mismatch_cnt << endl;
 
             // save number of input byte's related path constraints
             file << "max_input_size: " << maxInputSize << endl;
@@ -506,6 +522,12 @@ private:
 
     // 调用系统命令渲染图片
     static void renderImage(const std::string& filename) {
+        // Rendering with graphviz costs seconds on large trees and runs on
+        // every trace insertion, which stalls the fuzz loop. Keep the .dot
+        // output always; render PNGs only when explicitly requested.
+        static const bool enabled = getenv("AFL_PCBT_RENDER") != nullptr;
+        if (!enabled)
+            return;
         std::string command = "dot -Tpng " + filename + ".dot -o "
                             + filename + ".png";
         system(command.c_str());

@@ -1560,6 +1560,7 @@ int main(int argc, char **argv_orig, char **envp) {
     setup_symbolic_shmem(afl);
     setup_queue_entry_id_shmem(afl);
     setup_insert_depth_shmem(afl);
+    setup_dump_trace_shmem(afl);
     ACTF("SymCC Mode Begin...");
   }
 

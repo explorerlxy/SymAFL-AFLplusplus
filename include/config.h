@@ -435,6 +435,10 @@
 
 #define SHM_INSERT_DEPTH_ENV_VAR "__AFL_SHM_INSERT_DEPTH__ID"
 
+/* Environment variable used to gate .pct trace dumping in the target. */
+
+#define SHM_DUMP_TRACE_ENV_VAR "__AFL_SHM_DUMP_TRACE_ID"
+
 /* Environment variable used to pass SHM ID to the called program. */
 
 #define SHM_ENV_VAR "__AFL_SHM_ID"

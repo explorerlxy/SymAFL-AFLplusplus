@@ -901,10 +901,14 @@ void sync_fuzzers(afl_state_t *afl) {
             afl->pcbt_admitted_cnt++;
             *(u32*)afl->queue_entry_id->map = afl->queued_items;
             *(u32*)afl->insert_depth->map = depth;
-            /* Admitted candidates execute concolically. */
+            /* Admitted candidates execute concolically. The screening run
+               does not dump its trace; gaining candidates are replayed with
+               dumping enabled (see save_if_interesting). */
             *(u8*)afl->symbolic->map = 1;
+            *(u8*)afl->dump_trace->map = 0;
             afl->pcbt_pending_admission = 1;
             afl->pcbt_pending_queue_id = afl->queued_items;
+            afl->pcbt_pending_insert_depth = depth;
           }
         }
 
@@ -924,6 +928,10 @@ void sync_fuzzers(afl_state_t *afl) {
           afl->pcbt_concolic_exec_tm += (exec_end.tv_sec - exec_start.tv_sec) * 1000 +
               (exec_end.tv_nsec - exec_start.tv_nsec) / 1000000;
           afl->pcbt_concolic_exec_cnt++;
+          if (unlikely(!afl->pcbt_first_run_bitmap))
+            afl->pcbt_first_run_bitmap = ck_alloc(afl->fsrv.map_size);
+          memcpy(afl->pcbt_first_run_bitmap, afl->fsrv.trace_bits,
+                 afl->fsrv.map_size);
         }
 
         if (afl->stop_soon) {
@@ -1297,10 +1305,14 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
       afl->pcbt_admitted_cnt++;
       *(u32*)afl->queue_entry_id->map = afl->queued_items;
       *(u32*)afl->insert_depth->map = depth;
-      /* Admitted candidates execute concolically. */
+      /* Admitted candidates execute concolically. The screening run does
+         not dump its trace; gaining candidates are replayed with dumping
+         enabled (see save_if_interesting). */
       *(u8*)afl->symbolic->map = 1;
+      *(u8*)afl->dump_trace->map = 0;
       afl->pcbt_pending_admission = 1;
       afl->pcbt_pending_queue_id = afl->queued_items;
+      afl->pcbt_pending_insert_depth = depth;
     }
   }
   struct timespec start, end;
@@ -1320,6 +1332,10 @@ u8 __attribute__((hot)) common_fuzz_stuff(afl_state_t *afl, u8 *out_buf,
     afl->pcbt_concolic_exec_tm += (end.tv_sec - start.tv_sec) * 1000 +
                   (end.tv_nsec - start.tv_nsec) / 1000000;
     afl->pcbt_concolic_exec_cnt++;
+    if (unlikely(!afl->pcbt_first_run_bitmap))
+      afl->pcbt_first_run_bitmap = ck_alloc(afl->fsrv.map_size);
+    memcpy(afl->pcbt_first_run_bitmap, afl->fsrv.trace_bits,
+           afl->fsrv.map_size);
   }
   else{
     afl->con_exec_tm += (end.tv_sec - start.tv_sec) * 1000 +

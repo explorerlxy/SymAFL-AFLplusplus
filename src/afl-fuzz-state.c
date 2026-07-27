@@ -787,6 +787,7 @@ void afl_state_deinit(afl_state_t *afl) {
   ck_free(afl->virgin_bits);
   ck_free(afl->virgin_tmout);
   ck_free(afl->virgin_crash);
+  ck_free(afl->pcbt_first_run_bitmap);
   ck_free(afl->var_bytes);
   ck_free(afl->top_rated);
   ck_free(afl->clean_trace);

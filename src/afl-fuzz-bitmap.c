@@ -786,19 +786,58 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
     res = calibrate_case(afl, afl->queue_top, mem, afl->queue_cycle - 1, 0);
 
     if(afl->symcc_mode && afl->pcbt_pending_admission){
-      if(likely(!afl->queue_top->cal_failed) && likely(!afl->queue_top->var_behavior)){
+      /* The var_behavior flag compares the concolic first run against
+         concrete calibration runs and therefore fires for nearly every
+         admitted candidate. It is not a valid reason to skip trace
+         insertion: the replay below runs concolically like the first run,
+         and the first-run/replay bitmap comparison is the correct
+         reproducibility gate (it also catches genuine nondeterminism). */
+      if(likely(!afl->queue_top->cal_failed)){
         u8 *path_con_trace_path;
         path_con_trace_path = alloc_printf("%s/queue/.pct-%06u", afl->out_dir,
                                            afl->pcbt_pending_queue_id);
-        path_con_tree_insert_trace(afl, path_con_trace_path, afl->queue_top);
-        afl->pcbt_trace_insert_cnt++;
-        ck_free(path_con_trace_path);
-        if(!(afl->queued_items % 1)){
-          u8 *path_con_tree_vis_path;
-          path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-%06u", afl->out_dir, afl->queued_items - 1);
-          visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
-          ck_free(path_con_tree_vis_path);
+        /* P3: the screening execution ran with trace dumping disabled
+           (__dump_trace = 0), so no .pct exists yet. Replay this
+           coverage-gaining candidate concolically with dumping enabled to
+           materialize the trace. If the replay's coverage differs from the
+           first run's, the path is not reproducible: the queue entry is
+           still kept, but the trace is discarded and not inserted. */
+        *(u32*)afl->queue_entry_id->map = afl->pcbt_pending_queue_id;
+        *(u32*)afl->insert_depth->map = afl->pcbt_pending_insert_depth;
+        *(u8*)afl->symbolic->map = 1;
+        *(u8*)afl->dump_trace->map = 1;
+        if (unlikely(!afl->pcbt_first_run_bitmap))
+          afl->pcbt_first_run_bitmap = ck_alloc(afl->fsrv.map_size);
+        u32 replay_len = write_to_testcase(afl, (void **)&mem, len, 0);
+        struct timespec replay_start, replay_end;
+        clock_gettime(CLOCK_MONOTONIC, &replay_start);
+        u8 replay_fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        clock_gettime(CLOCK_MONOTONIC, &replay_end);
+        *(u8*)afl->symbolic->map = 0;
+        afl->pcbt_concolic_exec_tm +=
+            (replay_end.tv_sec - replay_start.tv_sec) * 1000 +
+            (replay_end.tv_nsec - replay_start.tv_nsec) / 1000000;
+        afl->pcbt_concolic_exec_cnt++;
+        afl->pcbt_replay_cnt++;
+        if (likely(replay_fault == FSRV_RUN_OK) && likely(replay_len == len) &&
+            likely(!memcmp(afl->pcbt_first_run_bitmap, afl->fsrv.trace_bits,
+                           afl->fsrv.map_size))) {
+          path_con_tree_insert_trace(afl, path_con_trace_path, afl->queue_top);
+          afl->pcbt_trace_insert_cnt++;
+          /* Snapshot the tree occasionally; .dot generation walks the whole
+             tree and would otherwise tax every insertion. */
+          if(!(afl->queued_items % 32)){
+            u8 *path_con_tree_vis_path;
+            path_con_tree_vis_path = alloc_printf("%s/queue/.PathConTree-%06u", afl->out_dir, afl->queued_items - 1);
+            visualize_path_con_tree(afl->path_con_tree, path_con_tree_vis_path);
+            ck_free(path_con_tree_vis_path);
+          }
+        } else {
+          afl->pcbt_replay_mismatch_cnt++;
+          if(!access(path_con_trace_path, 0))
+            remove(path_con_trace_path);
         }
+        ck_free(path_con_trace_path);
       }
       afl->pcbt_pending_admission = 0;
     }

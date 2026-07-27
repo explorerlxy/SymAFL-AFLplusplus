@@ -575,6 +575,8 @@ typedef struct afl_state {
       pcbt_trace_insert_cnt,   /* coverage-gaining traces inserted into PCBT  */
       pcbt_no_cov_gain_cnt,    /* admitted executions without coverage gain   */
       pcbt_saturated_branch_cnt, /* branches reaching the low-value threshold */
+      pcbt_replay_cnt,         /* gaining candidates re-executed for tracing  */
+      pcbt_replay_mismatch_cnt, /* replay bitmaps differing from first run    */
       pcbt_first_check_ms,     /* first PCBT screening timestamp              */
       pcbt_last_check_ms;      /* latest PCBT screening timestamp             */
 
@@ -625,12 +627,15 @@ typedef struct afl_state {
       pcbt_pending_admission;           /* Admitted candidate awaiting feedback */
 
   u32 pcbt_pending_queue_id;            /* .pct id for the pending admission */
+  u32 pcbt_pending_insert_depth;        /* insert depth for the pending one  */
+  u8 *pcbt_first_run_bitmap;            /* coverage of the screening run     */
 
   PathConTree *path_con_tree;
   sharedmem_t *outdir;
   sharedmem_t *symbolic;
   sharedmem_t *queue_entry_id;
   sharedmem_t *insert_depth;
+  sharedmem_t *dump_trace;              /* gates .pct dumping in the runtime */
 
   u8 *virgin_bits,                      /* Regions yet untouched by fuzzing */
       *virgin_tmout,                    /* Bits we haven't seen in tmouts   */
@@ -1191,6 +1196,7 @@ void setup_queue_entry_id_shmem(afl_state_t *afl);
 
 /* Setup shmem for pc insert depth */
 void setup_insert_depth_shmem(afl_state_t *afl);
+void setup_dump_trace_shmem(afl_state_t *afl);
 
 void read_afl_environment(afl_state_t *, char **);
 

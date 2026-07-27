@@ -1480,6 +1480,8 @@ void perform_dry_run(afl_state_t *afl) {
       else{
         afl->pcbt_admitted_cnt++;
         *(u8*)afl->symbolic->map = 1;
+        /* Dry-run seed traces seed the initial PCBT, so always dump them. */
+        *(u8*)afl->dump_trace->map = 1;
         *(u32*)afl->queue_entry_id->map = idx;
         *(u32*)afl->insert_depth->map = depth;
         (void)write_to_testcase(afl, (void **)&use_mem, read_len, 1);
@@ -3142,6 +3144,23 @@ void setup_insert_depth_shmem(afl_state_t *afl) {
 
   u8 *shm_str = alloc_printf("%d", afl->insert_depth->shm_id);
   setenv(SHM_INSERT_DEPTH_ENV_VAR, shm_str, 1);
+  ck_free(shm_str);
+
+}
+
+void setup_dump_trace_shmem(afl_state_t *afl) {
+  afl->dump_trace = ck_alloc(sizeof(sharedmem_t));
+
+  u8 *map = afl_shm_init(afl->dump_trace, 1, 1);
+  if (!map) { FATAL("BUG: Zero return from afl_shm_init."); }
+
+  /* Default to dumping: dry runs, sync imports, and replayed gaining
+     executions need the .pct trace. The mutation loop clears this before
+     screening executions (see common_fuzz_stuff). */
+  *map = 1;
+
+  u8 *shm_str = alloc_printf("%d", afl->dump_trace->shm_id);
+  setenv(SHM_DUMP_TRACE_ENV_VAR, shm_str, 1);
   ck_free(shm_str);
 
 }
