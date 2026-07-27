@@ -23,10 +23,10 @@ This is a modified AFL++ repository. SymAFL adds a Z3-backed **Path Constraint B
 
 1. `afl-fuzz -K[initDecCnt]` enables `symcc_mode` and creates a PCBT. The optional initial symbolic-declaration count defaults to `1024`. `-K` is custom and is not listed by the ordinary AFL++ help output.
 2. During mutation, `path_con_tree_check_input()` runs before concrete execution. It returns a positive tree depth for a candidate that can open a new branch, `-1` when no new branch is available, and `-2` when the tree is exhausted.
-3. For a candidate selected for execution, AFL++ passes queue entry ID and insertion depth through shared memory. The QSYM runtime produces an incremental SMT trace.
-4. `save_if_interesting()` retains coverage-interesting cases and calls `path_con_tree_insert_trace()` to extend the tree. Rejected cases must not be treated as normal concretely executed candidates.
-5. SymAFL-v1 has no focus mode: the PCBT is used exclusively for pre-execution candidate screening. Candidates that pass `CheckInput` execute once in concolic mode (`*__symbolic = 1` is set before their fork and reset afterwards). Coverage-gaining executions are queued and their `.pct` trace is inserted; executions without coverage gain increment the target branch's low-value counter and may mark that branch as fully explored after the configured threshold.
-6. Screening counters (`pcbt_candidate_cnt`, `pcbt_admitted_cnt`, `pcbt_rejected_cnt`, `pcbt_exhausted_cnt`, `pcbt_concolic_exec_cnt/tm`, `pcbt_trace_insert_cnt`, `pcbt_no_cov_gain_cnt`, and `pcbt_saturated_branch_cnt`) are written to `sym_mode_stats`. Candidate throughput is `pcbt_candidate_cnt / pcbt_wall_tm` and includes rejected candidates; `fsrv.total_execs` must not be used for it.
+3. For a candidate selected for execution, AFL++ passes queue entry ID and insertion depth through shared memory and clears the dump gate, so the screening run performs pure symbolic bookkeeping with no Z3 work and no `.pct` output.
+4. `save_if_interesting()` retains coverage-interesting cases, re-executes them concolically with the dump gate set (replay), verifies that the replay coverage bitmap matches the first run's, and calls `path_con_tree_insert_trace()` on the replayed `.pct` to extend the tree. Mismatched or faulting replays keep the queue entry but discard the trace. Rejected cases must not be treated as normal concretely executed candidates.
+5. SymAFL-v1 has no focus mode: the PCBT is used exclusively for pre-execution candidate screening. Candidates that pass `CheckInput` execute once in concolic mode (`*__symbolic = 1` is set before their fork and reset afterwards). Coverage-gaining executions are queued and traced via a gated replay (step 4); executions without coverage gain increment the target branch's low-value counter and may mark that branch as fully explored after the configured threshold.
+6. Screening counters (`pcbt_candidate_cnt`, `pcbt_admitted_cnt`, `pcbt_rejected_cnt`, `pcbt_exhausted_cnt`, `pcbt_concolic_exec_cnt/tm`, `pcbt_trace_insert_cnt`, `pcbt_no_cov_gain_cnt`, `pcbt_saturated_branch_cnt`, `pcbt_replay_cnt`, and `pcbt_replay_mismatch_cnt`) are written to `sym_mode_stats`. Candidate throughput is `pcbt_candidate_cnt / pcbt_wall_tm` and includes rejected candidates; `fsrv.total_execs` must not be used for it.
 
 `PathConTree.hpp` relies on inclusion through `afl-fuzz.h` for `afl_state_t` and `queue_entry` declarations. Preserve that include-order assumption when changing the API.
 
@@ -75,6 +75,7 @@ The QSYM runtime consumes the normal AFL coverage SHM plus these custom environm
 | `__AFL_SHM_OUTDIR_ENV_ID` | AFL output directory |
 | `__AFL_SHM_QUEUE_ENTRY_ID` | Current queue entry ID |
 | `__AFL_SHM_INSERT_DEPTH__ID` | First newly persisted constraint depth; spelling is intentional |
+| `__AFL_SHM_DUMP_TRACE_ID` | `.pct` dump gate; `0` for screening runs, `1` for dry-run/sync/replay |
 
 Expected output artifacts:
 
@@ -92,5 +93,6 @@ Keep these names aligned with `../symcc/runtime/src/backends/qsym/Runtime.cpp`. 
 |---|---:|---|
 | `MAX_ALLOWED_RIGHT_CHILD_CNT` | 128 | Limit repeated attempts at an unexplored negated branch |
 | `MAX_ALLOWED_SOLVER_TIMEOUT` | 1000 ms | Z3 timeout for PCBT checks |
+| `AFL_PCBT_RENDER` | unset | Render `.PathConTree-*.dot` snapshots to PNG via graphviz (expensive) |
 
 Do not change the PCBT algorithm, runtime trace format, or SHM names independently: the matching compiler/runtime behavior is split across [`../RSan/CLAUDE.md`](../RSan/CLAUDE.md) and [`../symcc/CLAUDE.md`](../symcc/CLAUDE.md).
