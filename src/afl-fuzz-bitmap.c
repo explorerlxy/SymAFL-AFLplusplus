@@ -764,7 +764,14 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
 
     }
 
-    if (unlikely(need_hash && new_bits)) {
+    /* In symcc mode the trace_bits of an admitted candidate come from its
+       concolic screening run, whose edge set differs from the concrete
+       calibration runs that follow. Pre-setting exec_cksum from it would
+       make calibrate_case flag every such entry as var_behavior (and
+       pollute var_bytes/virgin_bits with mode-dependent edges), so leave
+       exec_cksum zero and let the first concrete calibration run set the
+       baseline. */
+    if (unlikely(need_hash && new_bits) && !afl->pcbt_pending_admission) {
 
       /* due to classify counts we have to recalculate the checksum */
       afl->queue_top->exec_cksum =
@@ -811,7 +818,12 @@ u8 __attribute__((hot)) save_if_interesting(afl_state_t *afl, void *mem,
         u32 replay_len = write_to_testcase(afl, (void **)&mem, len, 0);
         struct timespec replay_start, replay_end;
         clock_gettime(CLOCK_MONOTONIC, &replay_start);
-        u8 replay_fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        /* The replay pays for the full trace + .pct dump, which can exceed
+           the regular exec timeout by an order of magnitude on deep paths
+           (e.g. xz/liblzma). Give it headroom; a replay that still times
+           out is counted as a mismatch and its trace is discarded. */
+        u8 replay_fault =
+            fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout * 10);
         clock_gettime(CLOCK_MONOTONIC, &replay_end);
         *(u8*)afl->symbolic->map = 0;
         afl->pcbt_concolic_exec_tm +=

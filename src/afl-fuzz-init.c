@@ -1487,7 +1487,11 @@ void perform_dry_run(afl_state_t *afl) {
         (void)write_to_testcase(afl, (void **)&use_mem, read_len, 1);
         struct timespec exec_start, exec_end;
         clock_gettime(CLOCK_MONOTONIC, &exec_start);
-        u8 trace_fault = fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout);
+        /* Dry-run seed traces include the .pct dump at child exit, which can
+           far exceed the regular exec timeout on deep paths (xz valid seed:
+           ~0.1 s trace + ~3 s dump). Give the concolic dry-run headroom. */
+        u8 trace_fault =
+            fuzz_run_target(afl, &afl->fsrv, afl->fsrv.exec_tmout * 10);
         clock_gettime(CLOCK_MONOTONIC, &exec_end);
         *(u8*)afl->symbolic->map = 0;
         afl->pcbt_concolic_exec_tm += (exec_end.tv_sec - exec_start.tv_sec) * 1000 +
